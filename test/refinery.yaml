@@ -1,0 +1,122 @@
+metadata:
+  description: "Modelo de otimização de refinaria"
+  version: "1.0"
+  last_updated: "2024-03-06"
+  author: "Nome do Engenheiro/Analista"
+
+crudes:
+  "Crude A":
+    availability: 20000
+    cost: 10
+  "Crude B":
+    availability: 30000
+    cost: 20
+
+units:
+  "Destilação":
+    capacity: 45000
+    cost: 10
+    yields:
+      "Crude A":
+        {
+          "NL": 0.10,
+          "NM": 0.20,
+          "NP": 0.20,
+          "OL": 0.12,
+          "OP": 0.20,
+          "RD": 0.13,
+        }
+      "Crude B":
+        {
+          "NL": 0.15,
+          "NM": 0.25,
+          "NP": 0.18,
+          "OL": 0.08,
+          "OP": 0.19,
+          "RD": 0.12,
+        }
+
+  "Reforma":
+    capacity: 10000
+    cost: 20
+    yields:
+      "NL": { "GR": 0.60 }
+      "NM": { "GR": 0.52 }
+      "NP": { "GR": 0.45 }
+
+  "Craqueamento":
+    capacity: 8000
+    cost: 30
+    yields:
+      "OL": { "GC": 0.28, "OC": 0.68 }
+      "OP": { "GC": 0.20, "OC": 0.75 }
+
+  "Produção de LUB":
+    capacity: 10000
+    cost: 5
+    yields:
+      "RD": { "LB": 0.50 }
+
+blending:
+  "GPR": # Gasolina Premium
+    price: 700
+    components: ["NL", "NM", "NP", "GR", "GC"]
+    constraints:
+      - type: min_RON
+        value: 94
+      - type: max_ratio
+        reference: GRE
+        value: 0.4
+
+  "GRE": # Gasolina Regular
+    price: 600
+    components: ["NL", "NM", "NP", "GR", "GC"]
+    constraints:
+      - type: min_RON
+        value: 84
+
+  "QAV": # Querosene de Aviação
+    price: 400
+    components: ["OL", "OP", "OC"]
+    constraints:
+      - type: max_vapor_pressure
+        value: 1.0
+
+  "OLC": # Óleo combustível
+    price: 350
+    components: ["OL", "OP", "OC", "RD"]
+    blend_ratio: { "OL": 10, "OP": 3, "OC": 4, "RD": 1 }
+
+  "LUB": # Óleo lubrificante
+    price: 150
+    components: ["LB"]
+    constraints:
+      - type: min production
+        value: 500
+      - type: max production
+        value: 1000
+
+stream_properties:
+  "NL":
+    RON: 90
+  "NM":
+    RON: 80
+  "NP":
+    RON: 70
+  "GR":
+    RON: 115
+  "GC":
+    RON: 105
+  "OL":
+    vapor_pressure: 1.0
+    sulfur: 0.3
+  "OP":
+    vapor_pressure: 0.6
+    sulfur: 1.2
+  "OC":
+    vapor_pressure: 1.5
+    sulfur: 0.6
+  "RD":
+    vapor_pressure: 0.05
+    sulfur: 2.0
+  "LB": {}

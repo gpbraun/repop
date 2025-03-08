@@ -1,0 +1,117 @@
+metadata:
+  description: "Refinery Optimization"
+  version: "1.0"
+  last_updated: "2025-03-06"
+  author: "Williams - Model Building in Mathematical Programming"
+
+crudes:
+  "Crude1":
+    availability: 20000
+    cost: 0
+  "Crude2":
+    availability: 30000
+    cost: 0
+
+units:
+  distillation:
+    capacity: 45000
+    cost: 0
+    yields:
+      "Crude1":
+        {
+          "LN": 0.10,
+          "MN": 0.20,
+          "HN": 0.20,
+          "LO": 0.12,
+          "HO": 0.20,
+          "R": 0.13,
+        }
+      "Crude2":
+        {
+          "LN": 0.15,
+          "MN": 0.25,
+          "HN": 0.18,
+          "LO": 0.08,
+          "HO": 0.19,
+          "R": 0.12,
+        }
+
+  reforming:
+    capacity: 10000
+    cost: 0
+    yields:
+      "LN": { "RG": 0.60 }
+      "MN": { "RG": 0.52 }
+      "HN": { "RG": 0.45 }
+
+  cracking:
+    capacity: 8000
+    cost: 0
+    yields:
+      "LO": { "CG": 0.28, "CO": 0.68 }
+      "HO": { "CG": 0.20, "CO": 0.75 }
+
+  lub_production:
+    capacity: 10000
+    cost: 0
+    yields:
+      "R": { "LB": 0.50 }
+
+blending:
+  "PMF":
+    price: 700
+    components: ["LN", "MN", "HN", "RG", "CG"]
+    constraints:
+      - type: min_RON
+        value: 94
+      - type: min_ratio
+        reference: RMF
+        value: 0.4
+
+  "RMF":
+    price: 600
+    components: ["LN", "MN", "HN", "RG", "CG"]
+    constraints:
+      - type: min_RON
+        value: 84
+
+  "JF":
+    price: 400
+    components: ["LO", "HO", "CO", "R"]
+    constraints:
+      - type: max_vapor_pressure
+        value: 1.0
+
+  "FO":
+    price: 350
+    components: ["LO", "CO", "HO", "R"]
+    blend_ratio: { "LO": 10, "CO": 4, "HO": 3, "R": 1 }
+
+  "LBO":
+    price: 150
+    components: ["LB"]
+    constraints:
+      - type: min production
+        value: 500
+      - type: max production
+        value: 1000
+
+stream_properties:
+  "LN":
+    RON: 90
+  "MN":
+    RON: 80
+  "HN":
+    RON: 70
+  "RG":
+    RON: 115
+  "CG":
+    RON: 105
+  "LO":
+    vapor_pressure: 1.0
+  "HO":
+    vapor_pressure: 0.6
+  "CO":
+    vapor_pressure: 1.5
+  "R":
+    vapor_pressure: 0.05

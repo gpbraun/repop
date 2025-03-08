@@ -1,0 +1,15 @@
+name: repop-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - pip
+  - rich
+  - numpy
+  - scipy
+  - pyyaml
+  - pydantic
+  - pyomo
+  - graphviz
+  - gurobi::gurobi
