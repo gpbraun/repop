@@ -1,22 +1,14 @@
 """
 models.py
 
-Definições de dados para o modelo de refinaria utilizando Pydantic.
-Contém as classes:
-  - Metadata
-  - Crude
-  - Stream
-  - Restriction
-  - ProcessingUnit
-  - Blending
-  - RefineryModel
+Estruturas de dados para o modelo de refinaria utilizando Pydantic.
 
 Gabriel Braun, 2025
 """
 
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 
 class Metadata(BaseModel):
@@ -130,3 +122,31 @@ class RefineryModel(BaseModel):
     units: Dict[str, ProcessingUnit]
     blending: Dict[str, Blending]
     streams: Dict[str, Stream]
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_streams(cls, values: dict) -> dict:
+        """
+        Constroi o dicionário de `streams`.
+        """
+        # Descobre as streams a partir dos yields das unidades
+        all_streams = set()
+        for unit in values.get("units", {}).values():
+            for yield_dict in unit.get("yields", {}).values():
+                all_streams.update(yield_dict.keys())
+        # Descobre as streams a partir dos componentes de blending
+        for blend in values.get("blending", {}).values():
+            all_streams.update(blend.get("components", []))
+
+        # Obtém as propriedades definidas para as streams, se houver
+        defined_stream_props = values.get("stream_properties", {})
+
+        # Constrói o dicionário final de streams
+        streams = {}
+        for s in all_streams:
+            stream_props = defined_stream_props.get(s, {})
+            streams[s] = {"name": s, **stream_props}
+
+        # Insere o dicionário de streams no objeto que será validado
+        values["streams"] = streams
+        return values

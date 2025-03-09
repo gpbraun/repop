@@ -12,6 +12,12 @@ from graphviz import Digraph
 
 from .models import RefineryModel
 
+CRUDE_COLOR = "#fb7185"
+POOL_COLOR = "#fde68a"
+BLEND_COLOR = "#a5b4fc"
+UNIT_COLOR = "#cbd5e1"
+EDGE_COLOR = "#1e293b"
+
 
 def generate_flowchart(
     model_data: RefineryModel,
@@ -37,11 +43,6 @@ def generate_flowchart(
         output_file (str): Nome base do arquivo de saída (sem extensão).
         format (str): Formato do arquivo (ex: "pdf", "png").
     """
-    CRUDE_COLOR = "#fb7185"
-    POOL_COLOR = "#fde68a"
-    BLEND_COLOR = "#a5b4fc"
-    UNIT_COLOR = "#cbd5e1"
-    EDGE_COLOR = "#1e293b"
 
     dot = Digraph(comment="Process Flowchart", format=format)
     dot.attr(rankdir="LR", splines="ortho", fontsize="12", fontname="Helvetica")
