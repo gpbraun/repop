@@ -5,11 +5,11 @@ channels:
 dependencies:
   - python
   - pip
-  - rich
-  - numpy
-  - scipy
+  - black
   - pyyaml
   - pydantic
+  - numpy
   - pyomo
+  - rich
   - graphviz
   - gurobi::gurobi
