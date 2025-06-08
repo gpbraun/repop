@@ -7,15 +7,12 @@ metadata:
 crudes:
   "Crude1":
     availability: 20000
-    cost: 0
   "Crude2":
     availability: 30000
-    cost: 0
 
 units:
   distillation:
     capacity: 45000
-    cost: 0
     yields:
       "Crude1":
         {
@@ -38,7 +35,6 @@ units:
 
   reforming:
     capacity: 10000
-    cost: 0
     yields:
       "LN": { "RG": 0.60 }
       "MN": { "RG": 0.52 }
@@ -46,14 +42,12 @@ units:
 
   cracking:
     capacity: 8000
-    cost: 0
     yields:
       "LO": { "CG": 0.28, "CO": 0.68 }
       "HO": { "CG": 0.20, "CO": 0.75 }
 
   lub_production:
     capacity: 10000
-    cost: 0
     yields:
       "R": { "LB": 0.50 }
 
@@ -79,13 +73,14 @@ blending:
     price: 400
     components: ["LO", "HO", "CO", "R"]
     constraints:
-      - type: max_vapor_pressure
+      - type: max_rvp
         value: 1.0
 
   "FO":
     price: 350
     components: ["LO", "CO", "HO", "R"]
-    blend_ratio: { "LO": 10, "CO": 4, "HO": 3, "R": 1 }
+    blend_ratios:
+      - { "LO": 10, "CO": 4, "HO": 3, "R": 1 }
 
   "LBO":
     price: 150
@@ -108,10 +103,10 @@ stream_properties:
   "CG":
     RON: 105
   "LO":
-    vapor_pressure: 1.0
+    RVP: 1.0
   "HO":
-    vapor_pressure: 0.6
+    RVP: 0.6
   "CO":
-    vapor_pressure: 1.5
+    RVP: 1.5
   "R":
-    vapor_pressure: 0.05
+    RVP: 0.05

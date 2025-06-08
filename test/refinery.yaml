@@ -7,10 +7,10 @@ metadata:
 crudes:
   "Crude A":
     availability: 20000
-    cost: 10
+    cost: 70
   "Crude B":
     availability: 30000
-    cost: 20
+    cost: 60
 
 units:
   "Destilação":
@@ -79,7 +79,7 @@ blending:
     price: 400
     components: ["OL", "OP", "OC"]
     constraints:
-      - type: max_vapor_pressure
+      - type: max_rvp
         value: 1.0
 
   "OLC": # Óleo combustível
@@ -108,15 +108,14 @@ stream_properties:
   "GC":
     RON: 105
   "OL":
-    vapor_pressure: 1.0
-    sulfur: 0.3
+    RVP: 1.0
+    sulphur: 0.3
   "OP":
-    vapor_pressure: 0.6
-    sulfur: 1.2
+    RVP: 0.6
+    sulphur: 1.2
   "OC":
-    vapor_pressure: 1.5
-    sulfur: 0.6
+    RVP: 1.5
+    sulphur: 0.6
   "RD":
-    vapor_pressure: 0.05
-    sulfur: 2.0
-  "LB": {}
+    RVP: 0.05
+    sulphur: 2.0

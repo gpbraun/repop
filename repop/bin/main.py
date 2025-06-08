@@ -27,6 +27,7 @@ from pathlib import Path
 import yaml
 
 import repop
+from repop.console import console, log_results
 
 
 def main():
@@ -65,13 +66,16 @@ def main():
 
     # Executa a otimização, se solicitado
     if args.optimize:
-        model, I_dict = repop.solve_refinery_model(model_data)
-        repop.display_results(model, model_data, I_dict)
+        pyomo_model = model_data.optimize(solver_name="glpk")
+        # repop.display_results(model, model_data, I_dict)
+
+    log_results(pyomo_model, model_data, console)
 
     # Gera o fluxograma, se solicitado
     if args.flowchart:
-        repop.generate_flowchart(
-            model_data, output_file=args.input_file.with_suffix(""), format="svg"
+        model_data.generate_flowchart(
+            output_file=args.input_file.with_suffix(""),
+            format="svg",
         )
 
 

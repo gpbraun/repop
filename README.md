@@ -88,13 +88,13 @@ Imposes an upper limit on the weighted average vapor pressure of the components 
 
 - `value` (float): Maximum allowed value for the average vapor pressure.
 
-##### `max_sulfur`
+##### `max_sulphur`
 
-Limits the sulfur content in the final product, ensuring compliance with environmental and quality standards.
+Limits the sulphur content in the final product, ensuring compliance with environmental and quality standards.
 
 **Parameters:**  
 
-- `value` (float): Maximum allowed sulfur content.
+- `value` (float): Maximum allowed sulphur content.
 
 ##### `min_ratio`
 
@@ -134,13 +134,13 @@ Limits the production of the blend to a maximum value, helping to control the sc
 
 ### 5. `stream_properties`
 
-This section is optional and defines specific properties for the streams. If a stream is not defined here, it will not be considered for the calculation of its properties (e.g., RON, vapor_pressure, or sulfur).
+This section is optional and defines specific properties for the streams. If a stream is not defined here, it will not be considered for the calculation of its properties (e.g., RON, vapor_pressure, or sulphur).
 
 **Attributes:**
 
 - `RON`: Octane number (Research Octane Number).
 - `vapor_pressure`: Vapor pressure.
-- `sulfur`: Sulfur content.
+- `sulphur`: sulphur content.
 
 ---
 
