@@ -85,7 +85,8 @@ blending:
   "OLC": # Óleo combustível
     price: 350
     components: ["OL", "OP", "OC", "RD"]
-    blend_ratio: { "OL": 10, "OP": 3, "OC": 4, "RD": 1 }
+    blend_ratios:
+      - { "OL": 10, "OP": 3, "OC": 4, "RD": 1 }
 
   "LUB": # Óleo lubrificante
     price: 150

@@ -6,7 +6,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from repop.models import RefineryModel
+from repop.models import Refinery
 
 
 def _normalize_zero(v: float, prec: int) -> float:
@@ -32,9 +32,7 @@ def style_name(n: str) -> str:
     return f"[bold cyan]{n}[/bold cyan]"
 
 
-def log_results(
-    model: ConcreteModel, refinery: RefineryModel, console: Console
-) -> None:
+def log_results(model: ConcreteModel, refinery: Refinery, console: Console) -> None:
     """
     Display refinery results in English:
     - Panel width 150, titles centered uppercase bold

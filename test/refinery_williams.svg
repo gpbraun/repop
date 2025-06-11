@@ -111,7 +111,7 @@
 <polygon fill="#1e293b" stroke="#1e293b" points="186.98,-154.95 191.98,-153.2 186.98,-151.45 186.98,-154.95"/>
 </g>
 <!-- Unit_reforming -->
-<g id="node12" class="node">
+<g id="node10" class="node">
 <title>Unit_reforming</title>
 <path fill="#cbd5e1" stroke="black" d="M347.75,-640.4C347.75,-640.4 307.75,-640.4 307.75,-640.4 301.75,-640.4 295.75,-634.4 295.75,-628.4 295.75,-628.4 295.75,-566 295.75,-566 295.75,-560 301.75,-554 307.75,-554 307.75,-554 347.75,-554 347.75,-554 353.75,-554 359.75,-560 359.75,-566 359.75,-566 359.75,-628.4 359.75,-628.4 359.75,-634.4 353.75,-640.4 347.75,-640.4"/>
 <text text-anchor="middle" x="327.75" y="-594.08" font-family="Helvetica,sans-Serif" font-size="10.00">reforming</text>
@@ -147,7 +147,7 @@
 <polygon fill="#1e293b" stroke="#1e293b" points="535.5,-684.77 533.75,-679.77 532,-684.77 535.5,-684.77"/>
 </g>
 <!-- Unit_cracking -->
-<g id="node10" class="node">
+<g id="node11" class="node">
 <title>Unit_cracking</title>
 <path fill="#cbd5e1" stroke="black" d="M344.38,-382.4C344.38,-382.4 311.12,-382.4 311.12,-382.4 305.12,-382.4 299.12,-376.4 299.12,-370.4 299.12,-370.4 299.12,-308 299.12,-308 299.12,-302 305.12,-296 311.12,-296 311.12,-296 344.38,-296 344.38,-296 350.38,-296 356.38,-302 356.38,-308 356.38,-308 356.38,-370.4 356.38,-370.4 356.38,-376.4 350.38,-382.4 344.38,-382.4"/>
 <text text-anchor="middle" x="327.75" y="-336.07" font-family="Helvetica,sans-Serif" font-size="10.00">cracking</text>
@@ -237,7 +237,7 @@
 <polygon fill="#1e293b" stroke="#1e293b" points="490.94,-661.95 495.94,-660.2 490.94,-658.45 490.94,-661.95"/>
 </g>
 <!-- Unit_lub_production -->
-<g id="node11" class="node">
+<g id="node12" class="node">
 <title>Unit_lub_production</title>
 <path fill="#cbd5e1" stroke="black" d="M359.75,-86.4C359.75,-86.4 295.75,-86.4 295.75,-86.4 289.75,-86.4 283.75,-80.4 283.75,-74.4 283.75,-74.4 283.75,-12 283.75,-12 283.75,-6 289.75,0 295.75,0 295.75,0 359.75,0 359.75,0 365.75,0 371.75,-6 371.75,-12 371.75,-12 371.75,-74.4 371.75,-74.4 371.75,-80.4 365.75,-86.4 359.75,-86.4"/>
 <text text-anchor="middle" x="327.75" y="-40.07" font-family="Helvetica,sans-Serif" font-size="10.00">lub_production</text>
@@ -259,6 +259,18 @@
 <title>Pool_R&#45;&gt;Blend_JF</title>
 <path fill="none" stroke="#1e293b" d="M241.65,-165.2C241.65,-165.2 490.77,-165.2 490.77,-165.2"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="490.77,-166.95 495.77,-165.2 490.77,-163.45 490.77,-166.95"/>
+</g>
+<!-- Pool_RG -->
+<g id="node16" class="node">
+<title>Pool_RG</title>
+<ellipse fill="#fde68a" stroke="black" cx="434.75" cy="-660.2" rx="27" ry="18"/>
+<text text-anchor="middle" x="434.75" y="-657.08" font-family="Helvetica,sans-Serif" font-size="10.00">RG</text>
+</g>
+<!-- Unit_reforming&#45;&gt;Pool_RG -->
+<g id="edge15" class="edge">
+<title>Unit_reforming&#45;&gt;Pool_RG</title>
+<path fill="none" stroke="#1e293b" d="M327.75,-640.56C327.75,-652.48 327.75,-662.2 327.75,-662.2 327.75,-662.2 400.96,-662.2 400.96,-662.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="400.96,-663.95 405.96,-662.2 400.96,-660.45 400.96,-663.95"/>
 </g>
 <!-- Pool_CG -->
 <g id="node13" class="node">
@@ -295,18 +307,6 @@
 <title>Unit_lub_production&#45;&gt;Pool_LB</title>
 <path fill="none" stroke="#1e293b" d="M372.2,-43.2C372.2,-43.2 400.9,-43.2 400.9,-43.2"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="400.9,-44.95 405.9,-43.2 400.9,-41.45 400.9,-44.95"/>
-</g>
-<!-- Pool_RG -->
-<g id="node16" class="node">
-<title>Pool_RG</title>
-<ellipse fill="#fde68a" stroke="black" cx="434.75" cy="-660.2" rx="27" ry="18"/>
-<text text-anchor="middle" x="434.75" y="-657.08" font-family="Helvetica,sans-Serif" font-size="10.00">RG</text>
-</g>
-<!-- Unit_reforming&#45;&gt;Pool_RG -->
-<g id="edge15" class="edge">
-<title>Unit_reforming&#45;&gt;Pool_RG</title>
-<path fill="none" stroke="#1e293b" d="M327.75,-640.56C327.75,-652.48 327.75,-662.2 327.75,-662.2 327.75,-662.2 400.96,-662.2 400.96,-662.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="400.96,-663.95 405.96,-662.2 400.96,-660.45 400.96,-663.95"/>
 </g>
 <!-- Pool_CG&#45;&gt;Blend_PMF -->
 <g id="edge23" class="edge">

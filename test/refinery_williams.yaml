@@ -91,7 +91,7 @@ blending:
       - type: max production
         value: 1000
 
-stream_properties:
+pool_properties:
   "LN":
     RON: 90
   "MN":

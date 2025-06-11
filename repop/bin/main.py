@@ -62,7 +62,7 @@ def main():
     else:
         raise Exception(f"Formato de arquivo '{args.input_file.stem}' não suportado.")
 
-    model_data = repop.RefineryModel.model_validate(data)
+    model_data = repop.Refinery.model_validate(data)
 
     # Executa a otimização, se solicitado
     if args.optimize:
@@ -74,8 +74,8 @@ def main():
     # Gera o fluxograma, se solicitado
     if args.flowchart:
         model_data.generate_flowchart(
-            output_file=args.input_file.with_suffix(""),
-            format="svg",
+            file_name=args.input_file.with_suffix(""),
+            file_format="svg",
         )
 
 
