@@ -79,8 +79,9 @@ blends:
   "FO":
     price: 350
     components: ["LO", "CO", "HO", "R"]
-    blend_ratios:
-      - { "LO": 10, "CO": 4, "HO": 3, "R": 1 }
+    constraints:
+      - type: fixed_ratio
+        ratios: { "LO": 10, "CO": 4, "HO": 3, "R": 1 }
 
   "LBO":
     price: 150
@@ -91,7 +92,7 @@ blends:
       - type: max_production
         value: 1000
 
-pool_properties:
+pools:
   "LN":
     RON: 90
   "MN":

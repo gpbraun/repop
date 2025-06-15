@@ -97,7 +97,7 @@ blends:
       - type: max_production
         value: 1000
 
-stream_properties:
+pools:
   "NL":
     RON: 90
   "NM":

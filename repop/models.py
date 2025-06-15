@@ -3,8 +3,6 @@ REPOP - Refinery modelling and optimisation
 Author: Gabriel Braun, 2025
 """
 
-from __future__ import annotations
-
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Callable, ClassVar, Dict, List, Optional
@@ -19,7 +17,7 @@ from repop.viz import flowchart
 # TYPE ALIAS FOR CUSTOM BLEND CONSTRAINT FUNCTIONS
 # ----------------------------------------------------------------------
 ConsFunc = Callable[["Refinery", str, Dict[str, Any]], Any]
-ObjFunc = Callable[["Refinery", pyo.ConcreteModel], Any]
+ObjFunc = Callable[["Refinery"], Any]
 
 
 # ======================================================================
@@ -47,16 +45,39 @@ class Pool(pyd.BaseModel):
     _alloc: VarMap = pyd.PrivateAttr(default_factory=VarMap)
 
 
+class CustomConstraint(pyd.BaseModel):
+    name: str = pyd.Field(alias="type")
+    properties: Dict[str, Any]
+
+    @pyd.model_validator(mode="before")
+    @classmethod
+    def _gather_props(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+        data["properties"] = {
+            k: v for k, v in data.items() if k not in ("name", "type")
+        }
+        return data
+
+
 class Unit(pyd.BaseModel):
     name: str
     level: int = 1
     cost: float = 0.0
     capacity: float
     yields: Dict[str, Dict[str, float]]
-    constraints: Optional[List[BlendConstraint]] = None
+    constraints: Optional[List[CustomConstraint]] = None
 
     _feeds: VarMap = pyd.PrivateAttr(default_factory=VarMap)
     _exits: VarMap = pyd.PrivateAttr(default_factory=VarMap)
+
+    _cons_map: ClassVar[dict[str, ConsFunc]] = {}
+
+    @classmethod
+    def constraint(cls, name: str):
+        def deco(fn: ConsFunc):
+            cls._cons_map[name.lower()] = fn
+            return fn
+
+        return deco
 
     @pyd.computed_field
     @property
@@ -71,58 +92,23 @@ class Unit(pyd.BaseModel):
         return dict(exit_yields)
 
 
-class BlendConstraint(pyd.BaseModel):
-    name: str = pyd.Field(alias="type")
-    properties: Dict[str, Any]
-
-    @pyd.model_validator(mode="before")
-    @classmethod
-    def _gather_props(cls, data: Dict[str, Any]) -> Dict[str, Any]:
-        data["properties"] = {
-            k: v for k, v in data.items() if k not in ("name", "type")
-        }
-        return data
-
-
 class Blend(pyd.BaseModel):
     name: str
     price: float
     components: List[str]
-    blend_ratios: Optional[List[Dict[str, float]]] = None
-    constraints: Optional[List[BlendConstraint]] = None
+    constraints: Optional[List[CustomConstraint]] = None
 
     _feeds: VarMap = pyd.PrivateAttr(default_factory=VarMap)
 
-    @pyd.field_validator("blend_ratios", mode="before")
+    _cons_map: ClassVar[dict[str, ConsFunc]] = {}
+
     @classmethod
-    def _validate_ratios(cls, v: Any, info) -> Optional[List[Dict[str, float]]]:
-        """
-        Validates that blend_ratios is a list of {component: ratio} dicts.
-        """
-        if v is None:
-            return None
+    def constraint(cls, name: str):
+        def deco(fn: ConsFunc):
+            cls._cons_map[name.lower()] = fn
+            return fn
 
-        comps = info.data.get("components", [])
-        if not isinstance(v, list) or not all(isinstance(r, dict) for r in v):
-            raise ValueError("blend_ratios must be a list of {component: ratio} dicts")
-
-        normalized: List[Dict[str, float]] = []
-        for row in v:
-            entry: Dict[str, float] = {}
-            for comp, val in row.items():
-                if comp not in comps:
-                    raise ValueError(
-                        f"Component '{comp}' not in blend components {comps}"
-                    )
-                if not isinstance(val, (int, float)) or val <= 0:
-                    continue
-                entry[comp] = float(val)
-            if not entry:
-                raise ValueError(
-                    "Each dict in blend_ratios must have at least one ratio > 0"
-                )
-            normalized.append(entry)
-        return normalized
+        return deco
 
 
 # ----------------------------------------------------------------------
@@ -145,8 +131,6 @@ class Refinery(pyd.BaseModel):
 
     # class vars
     round_decimals: ClassVar[int] = 6
-    b_cons: ClassVar[Dict[str, ConsFunc]] = {}
-    u_cons: ClassVar[Dict[str, ConsFunc]] = {}
     obj_fns: ClassVar[Dict[str, ObjFunc]] = {}
 
     @pyd.model_validator(mode="before")
@@ -159,7 +143,7 @@ class Refinery(pyd.BaseModel):
         c_map = {c_name: dict(c) for c_name, c in values.pop("crudes", {}).items()}
         u_map = {u_name: dict(u) for u_name, u in values.pop("units", {}).items()}
         b_map = {b_name: dict(b) for b_name, b in values.pop("blends", {}).items()}
-        p_props = values.pop("pool_properties", {})
+        p_props = values.pop("pools", {})
 
         # Automatically discover all pools from unit outputs and blend components
         p_set = set()
@@ -345,34 +329,31 @@ class Refinery(pyd.BaseModel):
         mdl.custom_blend_cons = pyo.ConstraintList()
         for b in self.blends:
             for spec in b.constraints or []:
-                fn = self.b_cons.get(spec.name.lower())
+                fn = Blend._cons_map.get(spec.name.lower())
                 if fn is None:
                     raise KeyError(f"Blend constraint '{spec.name}' not registered.")
-                mdl.custom_blend_cons.add(fn(self, b.name, spec.properties))
+                exprs = fn(self, b.name, spec.properties)
+
+                if isinstance(exprs, (list, tuple, set)):
+                    for e in exprs:
+                        mdl.custom_blend_cons.add(e)
+                else:
+                    mdl.custom_blend_cons.add(exprs)
 
         # custom unit constraints
         mdl.custom_unit_cons = pyo.ConstraintList()
         for u in self.units:
             for spec in u.constraints or []:
-                fn = self.u_cons.get(spec.name.lower())
+                fn = Unit._cons_map.get(spec.name.lower())
                 if fn is None:
                     raise KeyError(f"Unit constraint '{spec.name}' not registered.")
-                mdl.custom_unit_cons.add(fn(self, u.name, spec.properties))
+                exprs = fn(self, u.name, spec.properties)
 
-        # blend ratio constraints
-        ratio_triplets = [
-            (b.name, k, p, coeff)
-            for b in self.blends
-            for k, row in enumerate(b.blend_ratios or [])
-            for p, coeff in row.items()
-        ]
-        if ratio_triplets:
-            aux_keys = {(b, k) for (b, k, _p, _c) in ratio_triplets}
-            mdl.r_aux = pyo.Var(aux_keys, domain=pyo.NonNegativeReals)
-
-            @mdl.Constraint(ratio_triplets)
-            def fix_ratios(_m, b, k, p, coeff):
-                return mdl.b_feeds[b, p] == coeff * mdl.r_aux[b, k]
+                if isinstance(exprs, (list, tuple, set)):
+                    for e in exprs:
+                        mdl.custom_unit_cons.add(e)
+                else:
+                    mdl.custom_unit_cons.add(exprs)
 
     @pyd.model_validator(mode="after")
     def _create_model(self) -> "Refinery":
@@ -386,26 +367,10 @@ class Refinery(pyd.BaseModel):
         self._define_pyomo_cons()
 
         # objective
-        expr = self.obj_fns[self._obj_name](self, self._model)
+        expr = self.obj_fns[self._obj_name](self)
         self._model.objective = pyo.Objective(expr=expr, sense=pyo.maximize)
 
         return self
-
-    @classmethod
-    def blend_constraint(cls, name: str):
-        def decorator(fn: ConsFunc):
-            cls.b_cons[name.lower()] = fn
-            return fn
-
-        return decorator
-
-    @classmethod
-    def unit_constraint(cls, name: str):
-        def decorator(fn: ConsFunc):
-            cls.u_cons[name.lower()] = fn
-            return fn
-
-        return decorator
 
     @classmethod
     def objective(cls, name: str):
@@ -439,9 +404,9 @@ class Refinery(pyd.BaseModel):
 
 
 @Refinery.objective("max_profit")
-def _default_profit(ref: "Refinery", m: pyo.ConcreteModel) -> pyo.Expr:
-    revenue = sum(ref.blends[b]._feeds.sum() * ref.blends[b].price for b in m.B)
-    unit_op = sum(ref.units[u]._feeds.sum() * ref.units[u].cost for u in m.U)
-    crude_c = sum(ref.crudes[c]._alloc.sum() * ref.crudes[c].cost for c in m.C)
+def _default_profit(ref: "Refinery"):
+    revenue = sum(b._feeds.sum() * b.price for b in ref.blends)
+    unit_op = sum(u._feeds.sum() * u.cost for u in ref.units)
+    crude_c = sum(c._alloc.sum() * c.cost for c in ref.crudes)
 
     return revenue - unit_op - crude_c
