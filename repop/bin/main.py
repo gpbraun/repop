@@ -66,10 +66,10 @@ def main():
 
     # Executa a otimização, se solicitado
     if args.optimize:
-        pyomo_model = model_data.optimize(solver_name="glpk")
+        model_data.optimize(solver_name="glpk")
         # repop.display_results(model, model_data, I_dict)
 
-    log_results(pyomo_model, model_data, console)
+    log_results(model_data, console=console)
 
     # Gera o fluxograma, se solicitado
     if args.flowchart:

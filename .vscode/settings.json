@@ -16,6 +16,6 @@
     "**/__pycache__": true
   },
   "code-runner.executorMap": {
-    "yaml": "repop -f -o",
+    "yaml": "repop -f -o"
   }
 }

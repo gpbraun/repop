@@ -57,7 +57,7 @@ units:
     yields:
       "RD": { "LB": 0.50 }
 
-blending:
+blends:
   "GPR": # Gasolina Premium
     price: 700
     components: ["NL", "NM", "NP", "GR", "GC"]
@@ -92,9 +92,9 @@ blending:
     price: 150
     components: ["LB"]
     constraints:
-      - type: min production
+      - type: min_production
         value: 500
-      - type: max production
+      - type: max_production
         value: 1000
 
 stream_properties:

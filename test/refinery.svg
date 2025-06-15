@@ -38,68 +38,44 @@
 <path fill="none" stroke="#1e293b" d="M54.66,-383.1C54.66,-383.1 83.44,-383.1 83.44,-383.1"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="83.44,-384.85 88.44,-383.1 83.44,-381.35 83.44,-384.85"/>
 </g>
-<!-- Pool_NL -->
-<g id="node4" class="node">
-<title>Pool_NL</title>
-<ellipse fill="#fde68a" stroke="black" cx="221" cy="-590.2" rx="27" ry="18"/>
-<text text-anchor="middle" x="221" y="-587.08" font-family="Helvetica,sans-Serif" font-size="10.00">NL</text>
-</g>
-<!-- Unit_Destilação&#45;&gt;Pool_NL -->
-<g id="edge9" class="edge">
-<title>Unit_Destilação&#45;&gt;Pool_NL</title>
-<path fill="none" stroke="#1e293b" d="M112.5,-452.55C112.5,-506.1 112.5,-590.2 112.5,-590.2 112.5,-590.2 187.11,-590.2 187.11,-590.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="187.11,-591.95 192.11,-590.2 187.11,-588.45 187.11,-591.95"/>
-</g>
-<!-- Pool_NM -->
-<g id="node5" class="node">
-<title>Pool_NM</title>
-<ellipse fill="#fde68a" stroke="black" cx="221" cy="-528.2" rx="27" ry="18"/>
-<text text-anchor="middle" x="221" y="-525.08" font-family="Helvetica,sans-Serif" font-size="10.00">NM</text>
-</g>
-<!-- Unit_Destilação&#45;&gt;Pool_NM -->
-<g id="edge10" class="edge">
-<title>Unit_Destilação&#45;&gt;Pool_NM</title>
-<path fill="none" stroke="#1e293b" d="M135.5,-452.84C135.5,-486.8 135.5,-528.2 135.5,-528.2 135.5,-528.2 187.43,-528.2 187.43,-528.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="187.43,-529.95 192.43,-528.2 187.43,-526.45 187.43,-529.95"/>
-</g>
 <!-- Pool_NP -->
-<g id="node6" class="node">
+<g id="node4" class="node">
 <title>Pool_NP</title>
-<ellipse fill="#fde68a" stroke="black" cx="221" cy="-431.2" rx="27" ry="18"/>
-<text text-anchor="middle" x="221" y="-428.07" font-family="Helvetica,sans-Serif" font-size="10.00">NP</text>
+<ellipse fill="#fde68a" stroke="black" cx="221" cy="-590.2" rx="27" ry="18"/>
+<text text-anchor="middle" x="221" y="-587.08" font-family="Helvetica,sans-Serif" font-size="10.00">NP</text>
 </g>
 <!-- Unit_Destilação&#45;&gt;Pool_NP -->
 <g id="edge11" class="edge">
 <title>Unit_Destilação&#45;&gt;Pool_NP</title>
-<path fill="none" stroke="#1e293b" d="M158.28,-431.2C158.28,-431.2 187.02,-431.2 187.02,-431.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="187.02,-432.95 192.02,-431.2 187.02,-429.45 187.02,-432.95"/>
-</g>
-<!-- Pool_OL -->
-<g id="node7" class="node">
-<title>Pool_OL</title>
-<ellipse fill="#fde68a" stroke="black" cx="221" cy="-253.2" rx="27" ry="18"/>
-<text text-anchor="middle" x="221" y="-250.07" font-family="Helvetica,sans-Serif" font-size="10.00">OL</text>
-</g>
-<!-- Unit_Destilação&#45;&gt;Pool_OL -->
-<g id="edge12" class="edge">
-<title>Unit_Destilação&#45;&gt;Pool_OL</title>
-<path fill="none" stroke="#1e293b" d="M135.5,-365.75C135.5,-319.59 135.5,-253.2 135.5,-253.2 135.5,-253.2 187.43,-253.2 187.43,-253.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="187.43,-254.95 192.43,-253.2 187.43,-251.45 187.43,-254.95"/>
+<path fill="none" stroke="#1e293b" d="M112.5,-452.55C112.5,-506.1 112.5,-590.2 112.5,-590.2 112.5,-590.2 187.11,-590.2 187.11,-590.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="187.11,-591.95 192.11,-590.2 187.11,-588.45 187.11,-591.95"/>
 </g>
 <!-- Pool_OP -->
-<g id="node8" class="node">
+<g id="node5" class="node">
 <title>Pool_OP</title>
-<ellipse fill="#fde68a" stroke="black" cx="221" cy="-334.2" rx="27" ry="18"/>
-<text text-anchor="middle" x="221" y="-331.07" font-family="Helvetica,sans-Serif" font-size="10.00">OP</text>
+<ellipse fill="#fde68a" stroke="black" cx="221" cy="-253.2" rx="27" ry="18"/>
+<text text-anchor="middle" x="221" y="-250.07" font-family="Helvetica,sans-Serif" font-size="10.00">OP</text>
 </g>
 <!-- Unit_Destilação&#45;&gt;Pool_OP -->
 <g id="edge13" class="edge">
 <title>Unit_Destilação&#45;&gt;Pool_OP</title>
+<path fill="none" stroke="#1e293b" d="M135.5,-365.75C135.5,-319.59 135.5,-253.2 135.5,-253.2 135.5,-253.2 187.43,-253.2 187.43,-253.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="187.43,-254.95 192.43,-253.2 187.43,-251.45 187.43,-254.95"/>
+</g>
+<!-- Pool_OL -->
+<g id="node6" class="node">
+<title>Pool_OL</title>
+<ellipse fill="#fde68a" stroke="black" cx="221" cy="-334.2" rx="27" ry="18"/>
+<text text-anchor="middle" x="221" y="-331.07" font-family="Helvetica,sans-Serif" font-size="10.00">OL</text>
+</g>
+<!-- Unit_Destilação&#45;&gt;Pool_OL -->
+<g id="edge12" class="edge">
+<title>Unit_Destilação&#45;&gt;Pool_OL</title>
 <path fill="none" stroke="#1e293b" d="M158.41,-375.1C182.89,-375.1 211.5,-375.1 211.5,-375.1 211.5,-375.1 211.5,-357.82 211.5,-357.82"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="213.25,-357.82 211.5,-352.82 209.75,-357.82 213.25,-357.82"/>
 </g>
 <!-- Pool_RD -->
-<g id="node9" class="node">
+<g id="node7" class="node">
 <title>Pool_RD</title>
 <ellipse fill="#fde68a" stroke="black" cx="221" cy="-114.2" rx="27" ry="18"/>
 <text text-anchor="middle" x="221" y="-111.07" font-family="Helvetica,sans-Serif" font-size="10.00">RD</text>
@@ -110,15 +86,39 @@
 <path fill="none" stroke="#1e293b" d="M112.5,-365.67C112.5,-283.61 112.5,-114.2 112.5,-114.2 112.5,-114.2 187.11,-114.2 187.11,-114.2"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="187.11,-115.95 192.11,-114.2 187.11,-112.45 187.11,-115.95"/>
 </g>
+<!-- Pool_NL -->
+<g id="node8" class="node">
+<title>Pool_NL</title>
+<ellipse fill="#fde68a" stroke="black" cx="221" cy="-528.2" rx="27" ry="18"/>
+<text text-anchor="middle" x="221" y="-525.08" font-family="Helvetica,sans-Serif" font-size="10.00">NL</text>
+</g>
+<!-- Unit_Destilação&#45;&gt;Pool_NL -->
+<g id="edge9" class="edge">
+<title>Unit_Destilação&#45;&gt;Pool_NL</title>
+<path fill="none" stroke="#1e293b" d="M135.5,-452.84C135.5,-486.8 135.5,-528.2 135.5,-528.2 135.5,-528.2 187.43,-528.2 187.43,-528.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="187.43,-529.95 192.43,-528.2 187.43,-526.45 187.43,-529.95"/>
+</g>
+<!-- Pool_NM -->
+<g id="node9" class="node">
+<title>Pool_NM</title>
+<ellipse fill="#fde68a" stroke="black" cx="221" cy="-431.2" rx="27" ry="18"/>
+<text text-anchor="middle" x="221" y="-428.07" font-family="Helvetica,sans-Serif" font-size="10.00">NM</text>
+</g>
+<!-- Unit_Destilação&#45;&gt;Pool_NM -->
+<g id="edge10" class="edge">
+<title>Unit_Destilação&#45;&gt;Pool_NM</title>
+<path fill="none" stroke="#1e293b" d="M158.28,-431.2C158.28,-431.2 187.02,-431.2 187.02,-431.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="187.02,-432.95 192.02,-431.2 187.02,-429.45 187.02,-432.95"/>
+</g>
 <!-- Unit_Reforma -->
-<g id="node12" class="node">
+<g id="node10" class="node">
 <title>Unit_Reforma</title>
 <path fill="#cbd5e1" stroke="black" d="M350.25,-602.4C350.25,-602.4 316.25,-602.4 316.25,-602.4 310.25,-602.4 304.25,-596.4 304.25,-590.4 304.25,-590.4 304.25,-528 304.25,-528 304.25,-522 310.25,-516 316.25,-516 316.25,-516 350.25,-516 350.25,-516 356.25,-516 362.25,-522 362.25,-528 362.25,-528 362.25,-590.4 362.25,-590.4 362.25,-596.4 356.25,-602.4 350.25,-602.4"/>
 <text text-anchor="middle" x="333.25" y="-556.08" font-family="Helvetica,sans-Serif" font-size="10.00">Reforma</text>
 </g>
-<!-- Pool_NL&#45;&gt;Unit_Reforma -->
-<g id="edge3" class="edge">
-<title>Pool_NL&#45;&gt;Unit_Reforma</title>
+<!-- Pool_NP&#45;&gt;Unit_Reforma -->
+<g id="edge5" class="edge">
+<title>Pool_NP&#45;&gt;Unit_Reforma</title>
 <path fill="none" stroke="#1e293b" d="M248.17,-592.33C248.17,-592.33 297.45,-592.33 297.45,-592.33"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="297.45,-594.08 302.45,-592.33 297.45,-590.58 297.45,-594.08"/>
 </g>
@@ -128,9 +128,9 @@
 <path fill="#a5b4fc" stroke="black" d="M550.5,-640.2C550.5,-640.2 520.5,-640.2 520.5,-640.2 514.5,-640.2 508.5,-634.2 508.5,-628.2 508.5,-628.2 508.5,-616.2 508.5,-616.2 508.5,-610.2 514.5,-604.2 520.5,-604.2 520.5,-604.2 550.5,-604.2 550.5,-604.2 556.5,-604.2 562.5,-610.2 562.5,-616.2 562.5,-616.2 562.5,-628.2 562.5,-628.2 562.5,-634.2 556.5,-640.2 550.5,-640.2"/>
 <text text-anchor="middle" x="535.5" y="-619.08" font-family="Helvetica,sans-Serif" font-size="10.00">GPR</text>
 </g>
-<!-- Pool_NL&#45;&gt;Blend_GPR -->
-<g id="edge19" class="edge">
-<title>Pool_NL&#45;&gt;Blend_GPR</title>
+<!-- Pool_NP&#45;&gt;Blend_GPR -->
+<g id="edge21" class="edge">
+<title>Pool_NP&#45;&gt;Blend_GPR</title>
 <path fill="none" stroke="#1e293b" d="M220.5,-608.49C220.5,-630.41 220.5,-664.2 220.5,-664.2 220.5,-664.2 544.5,-664.2 544.5,-664.2 544.5,-664.2 544.5,-646.77 544.5,-646.77"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="546.25,-646.77 544.5,-641.77 542.75,-646.77 546.25,-646.77"/>
 </g>
@@ -140,57 +140,21 @@
 <path fill="#a5b4fc" stroke="black" d="M550.5,-506.2C550.5,-506.2 520.5,-506.2 520.5,-506.2 514.5,-506.2 508.5,-500.2 508.5,-494.2 508.5,-494.2 508.5,-482.2 508.5,-482.2 508.5,-476.2 514.5,-470.2 520.5,-470.2 520.5,-470.2 550.5,-470.2 550.5,-470.2 556.5,-470.2 562.5,-476.2 562.5,-482.2 562.5,-482.2 562.5,-494.2 562.5,-494.2 562.5,-500.2 556.5,-506.2 550.5,-506.2"/>
 <text text-anchor="middle" x="535.5" y="-485.07" font-family="Helvetica,sans-Serif" font-size="10.00">GRE</text>
 </g>
-<!-- Pool_NL&#45;&gt;Blend_GRE -->
-<g id="edge24" class="edge">
-<title>Pool_NL&#45;&gt;Blend_GRE</title>
-<path fill="none" stroke="#1e293b" d="M245.47,-582.27C266.86,-582.27 294.5,-582.27 294.5,-582.27 294.5,-582.27 294.5,-491.8 294.5,-491.8 294.5,-491.8 501.81,-491.8 501.81,-491.8"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="501.81,-493.55 506.81,-491.8 501.81,-490.05 501.81,-493.55"/>
-</g>
-<!-- Pool_NM&#45;&gt;Unit_Reforma -->
-<g id="edge4" class="edge">
-<title>Pool_NM&#45;&gt;Unit_Reforma</title>
-<path fill="none" stroke="#1e293b" d="M248.17,-526.07C248.17,-526.07 297.45,-526.07 297.45,-526.07"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="297.45,-527.82 302.45,-526.07 297.45,-524.32 297.45,-527.82"/>
-</g>
-<!-- Pool_NM&#45;&gt;Blend_GPR -->
-<g id="edge20" class="edge">
-<title>Pool_NM&#45;&gt;Blend_GPR</title>
-<path fill="none" stroke="#1e293b" d="M245.84,-536.13C268.84,-536.13 299.5,-536.13 299.5,-536.13 299.5,-536.13 299.5,-652.2 299.5,-652.2 299.5,-652.2 526.5,-652.2 526.5,-652.2 526.5,-652.2 526.5,-647.2 526.5,-647.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="528.25,-647.2 526.5,-642.2 524.75,-647.2 528.25,-647.2"/>
-</g>
-<!-- Pool_NM&#45;&gt;Blend_GRE -->
-<g id="edge25" class="edge">
-<title>Pool_NM&#45;&gt;Blend_GRE</title>
-<path fill="none" stroke="#1e293b" d="M220.5,-509.71C220.5,-497.83 220.5,-484.6 220.5,-484.6 220.5,-484.6 501.58,-484.6 501.58,-484.6"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="501.58,-486.35 506.58,-484.6 501.58,-482.85 501.58,-486.35"/>
-</g>
-<!-- Pool_NP&#45;&gt;Unit_Reforma -->
-<g id="edge5" class="edge">
-<title>Pool_NP&#45;&gt;Unit_Reforma</title>
-<path fill="none" stroke="#1e293b" d="M244.86,-440.2C277.88,-440.2 333.5,-440.2 333.5,-440.2 333.5,-440.2 333.5,-509.05 333.5,-509.05"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="331.75,-509.05 333.5,-514.05 335.25,-509.05 331.75,-509.05"/>
-</g>
-<!-- Pool_NP&#45;&gt;Blend_GPR -->
-<g id="edge21" class="edge">
-<title>Pool_NP&#45;&gt;Blend_GPR</title>
-<path fill="none" stroke="#1e293b" d="M248.21,-431.2C315.53,-431.2 484.5,-431.2 484.5,-431.2 484.5,-431.2 484.5,-622.2 484.5,-622.2 484.5,-622.2 501.69,-622.2 501.69,-622.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="501.69,-623.95 506.69,-622.2 501.69,-620.45 501.69,-623.95"/>
-</g>
 <!-- Pool_NP&#45;&gt;Blend_GRE -->
 <g id="edge26" class="edge">
 <title>Pool_NP&#45;&gt;Blend_GRE</title>
-<path fill="none" stroke="#1e293b" d="M244.79,-422.2C319.5,-422.2 544.5,-422.2 544.5,-422.2 544.5,-422.2 544.5,-463.3 544.5,-463.3"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="542.75,-463.3 544.5,-468.3 546.25,-463.3 542.75,-463.3"/>
+<path fill="none" stroke="#1e293b" d="M245.47,-582.27C266.86,-582.27 294.5,-582.27 294.5,-582.27 294.5,-582.27 294.5,-491.8 294.5,-491.8 294.5,-491.8 501.81,-491.8 501.81,-491.8"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="501.81,-493.55 506.81,-491.8 501.81,-490.05 501.81,-493.55"/>
 </g>
 <!-- Unit_Craqueamento -->
-<g id="node10" class="node">
+<g id="node11" class="node">
 <title>Unit_Craqueamento</title>
 <path fill="#cbd5e1" stroke="black" d="M365.25,-342.4C365.25,-342.4 301.25,-342.4 301.25,-342.4 295.25,-342.4 289.25,-336.4 289.25,-330.4 289.25,-330.4 289.25,-268 289.25,-268 289.25,-262 295.25,-256 301.25,-256 301.25,-256 365.25,-256 365.25,-256 371.25,-256 377.25,-262 377.25,-268 377.25,-268 377.25,-330.4 377.25,-330.4 377.25,-336.4 371.25,-342.4 365.25,-342.4"/>
 <text text-anchor="middle" x="333.25" y="-296.07" font-family="Helvetica,sans-Serif" font-size="10.00">Craqueamento</text>
 </g>
-<!-- Pool_OL&#45;&gt;Unit_Craqueamento -->
-<g id="edge6" class="edge">
-<title>Pool_OL&#45;&gt;Unit_Craqueamento</title>
+<!-- Pool_OP&#45;&gt;Unit_Craqueamento -->
+<g id="edge7" class="edge">
+<title>Pool_OP&#45;&gt;Unit_Craqueamento</title>
 <path fill="none" stroke="#1e293b" d="M243.72,-263.6C243.72,-263.6 282.25,-263.6 282.25,-263.6"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="282.25,-265.35 287.25,-263.6 282.25,-261.85 282.25,-265.35"/>
 </g>
@@ -200,9 +164,9 @@
 <path fill="#a5b4fc" stroke="black" d="M550.5,-189.2C550.5,-189.2 520.5,-189.2 520.5,-189.2 514.5,-189.2 508.5,-183.2 508.5,-177.2 508.5,-177.2 508.5,-165.2 508.5,-165.2 508.5,-159.2 514.5,-153.2 520.5,-153.2 520.5,-153.2 550.5,-153.2 550.5,-153.2 556.5,-153.2 562.5,-159.2 562.5,-165.2 562.5,-165.2 562.5,-177.2 562.5,-177.2 562.5,-183.2 556.5,-189.2 550.5,-189.2"/>
 <text text-anchor="middle" x="535.5" y="-168.07" font-family="Helvetica,sans-Serif" font-size="10.00">OLC</text>
 </g>
-<!-- Pool_OL&#45;&gt;Blend_OLC -->
-<g id="edge32" class="edge">
-<title>Pool_OL&#45;&gt;Blend_OLC</title>
+<!-- Pool_OP&#45;&gt;Blend_OLC -->
+<g id="edge33" class="edge">
+<title>Pool_OP&#45;&gt;Blend_OLC</title>
 <path fill="none" stroke="#1e293b" d="M242.97,-242.13C313.02,-242.13 526.5,-242.13 526.5,-242.13 526.5,-242.13 526.5,-195.98 526.5,-195.98"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="528.25,-195.98 526.5,-190.98 524.75,-195.98 528.25,-195.98"/>
 </g>
@@ -212,32 +176,32 @@
 <path fill="#a5b4fc" stroke="black" d="M550.5,-292.2C550.5,-292.2 520.5,-292.2 520.5,-292.2 514.5,-292.2 508.5,-286.2 508.5,-280.2 508.5,-280.2 508.5,-268.2 508.5,-268.2 508.5,-262.2 514.5,-256.2 520.5,-256.2 520.5,-256.2 550.5,-256.2 550.5,-256.2 556.5,-256.2 562.5,-262.2 562.5,-268.2 562.5,-268.2 562.5,-280.2 562.5,-280.2 562.5,-286.2 556.5,-292.2 550.5,-292.2"/>
 <text text-anchor="middle" x="535.5" y="-271.07" font-family="Helvetica,sans-Serif" font-size="10.00">QAV</text>
 </g>
-<!-- Pool_OL&#45;&gt;Blend_QAV -->
-<g id="edge29" class="edge">
-<title>Pool_OL&#45;&gt;Blend_QAV</title>
-<path fill="none" stroke="#1e293b" d="M247.75,-249.07C325.26,-249.07 544.5,-249.07 544.5,-249.07 544.5,-249.07 544.5,-249.75 544.5,-249.75"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="542.75,-249.42 544.5,-254.42 546.25,-249.42 542.75,-249.42"/>
-</g>
-<!-- Pool_OP&#45;&gt;Unit_Craqueamento -->
-<g id="edge7" class="edge">
-<title>Pool_OP&#45;&gt;Unit_Craqueamento</title>
-<path fill="none" stroke="#1e293b" d="M248.46,-333.67C248.46,-333.67 282.51,-333.67 282.51,-333.67"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="282.51,-335.42 287.51,-333.67 282.51,-331.92 282.51,-335.42"/>
-</g>
-<!-- Pool_OP&#45;&gt;Blend_OLC -->
-<g id="edge33" class="edge">
-<title>Pool_OP&#45;&gt;Blend_OLC</title>
-<path fill="none" stroke="#1e293b" d="M244.55,-324.93C255.23,-324.93 265.5,-324.93 265.5,-324.93 265.5,-324.93 265.5,-165.2 265.5,-165.2 265.5,-165.2 501.61,-165.2 501.61,-165.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="501.61,-166.95 506.61,-165.2 501.61,-163.45 501.61,-166.95"/>
-</g>
 <!-- Pool_OP&#45;&gt;Blend_QAV -->
 <g id="edge30" class="edge">
 <title>Pool_OP&#45;&gt;Blend_QAV</title>
+<path fill="none" stroke="#1e293b" d="M247.75,-249.07C325.26,-249.07 544.5,-249.07 544.5,-249.07 544.5,-249.07 544.5,-249.75 544.5,-249.75"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="542.75,-249.42 544.5,-254.42 546.25,-249.42 542.75,-249.42"/>
+</g>
+<!-- Pool_OL&#45;&gt;Unit_Craqueamento -->
+<g id="edge6" class="edge">
+<title>Pool_OL&#45;&gt;Unit_Craqueamento</title>
+<path fill="none" stroke="#1e293b" d="M248.46,-333.67C248.46,-333.67 282.51,-333.67 282.51,-333.67"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="282.51,-335.42 287.51,-333.67 282.51,-331.92 282.51,-335.42"/>
+</g>
+<!-- Pool_OL&#45;&gt;Blend_OLC -->
+<g id="edge32" class="edge">
+<title>Pool_OL&#45;&gt;Blend_OLC</title>
+<path fill="none" stroke="#1e293b" d="M244.55,-324.93C255.23,-324.93 265.5,-324.93 265.5,-324.93 265.5,-324.93 265.5,-165.2 265.5,-165.2 265.5,-165.2 501.61,-165.2 501.61,-165.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="501.61,-166.95 506.61,-165.2 501.61,-163.45 501.61,-166.95"/>
+</g>
+<!-- Pool_OL&#45;&gt;Blend_QAV -->
+<g id="edge29" class="edge">
+<title>Pool_OL&#45;&gt;Blend_QAV</title>
 <path fill="none" stroke="#1e293b" d="M229.5,-351.48C229.5,-370.59 229.5,-398.7 229.5,-398.7 229.5,-398.7 526.5,-398.7 526.5,-398.7 526.5,-398.7 526.5,-299.08 526.5,-299.08"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="528.25,-299.08 526.5,-294.08 524.75,-299.08 528.25,-299.08"/>
 </g>
 <!-- Unit_Produção de LUB -->
-<g id="node11" class="node">
+<g id="node12" class="node">
 <title>Unit_Produção de LUB</title>
 <path fill="#cbd5e1" stroke="black" d="M370.5,-86.4C370.5,-86.4 296,-86.4 296,-86.4 290,-86.4 284,-80.4 284,-74.4 284,-74.4 284,-12 284,-12 284,-6 290,0 296,0 296,0 370.5,0 370.5,0 376.5,0 382.5,-6 382.5,-12 382.5,-12 382.5,-74.4 382.5,-74.4 382.5,-80.4 376.5,-86.4 370.5,-86.4"/>
 <text text-anchor="middle" x="333.25" y="-40.07" font-family="Helvetica,sans-Serif" font-size="10.00">Produção de LUB</text>
@@ -254,20 +218,56 @@
 <path fill="none" stroke="#1e293b" d="M247,-120.2C322.35,-120.2 535.5,-120.2 535.5,-120.2 535.5,-120.2 535.5,-146.27 535.5,-146.27"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="533.75,-146.27 535.5,-151.27 537.25,-146.27 533.75,-146.27"/>
 </g>
-<!-- Pool_GC -->
-<g id="node13" class="node">
-<title>Pool_GC</title>
-<ellipse fill="#fde68a" stroke="black" cx="445.5" cy="-366.2" rx="27" ry="18"/>
-<text text-anchor="middle" x="445.5" y="-363.07" font-family="Helvetica,sans-Serif" font-size="10.00">GC</text>
+<!-- Pool_NL&#45;&gt;Unit_Reforma -->
+<g id="edge3" class="edge">
+<title>Pool_NL&#45;&gt;Unit_Reforma</title>
+<path fill="none" stroke="#1e293b" d="M248.17,-526.07C248.17,-526.07 297.45,-526.07 297.45,-526.07"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="297.45,-527.82 302.45,-526.07 297.45,-524.32 297.45,-527.82"/>
 </g>
-<!-- Unit_Craqueamento&#45;&gt;Pool_GC -->
-<g id="edge16" class="edge">
-<title>Unit_Craqueamento&#45;&gt;Pool_GC</title>
-<path fill="none" stroke="#1e293b" d="M369.5,-342.7C369.5,-351.54 369.5,-358.2 369.5,-358.2 369.5,-358.2 414.52,-358.2 414.52,-358.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="414.52,-359.95 419.52,-358.2 414.52,-356.45 414.52,-359.95"/>
+<!-- Pool_NL&#45;&gt;Blend_GPR -->
+<g id="edge19" class="edge">
+<title>Pool_NL&#45;&gt;Blend_GPR</title>
+<path fill="none" stroke="#1e293b" d="M245.84,-536.13C268.84,-536.13 299.5,-536.13 299.5,-536.13 299.5,-536.13 299.5,-652.2 299.5,-652.2 299.5,-652.2 526.5,-652.2 526.5,-652.2 526.5,-652.2 526.5,-647.2 526.5,-647.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="528.25,-647.2 526.5,-642.2 524.75,-647.2 528.25,-647.2"/>
+</g>
+<!-- Pool_NL&#45;&gt;Blend_GRE -->
+<g id="edge24" class="edge">
+<title>Pool_NL&#45;&gt;Blend_GRE</title>
+<path fill="none" stroke="#1e293b" d="M220.5,-509.71C220.5,-497.83 220.5,-484.6 220.5,-484.6 220.5,-484.6 501.58,-484.6 501.58,-484.6"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="501.58,-486.35 506.58,-484.6 501.58,-482.85 501.58,-486.35"/>
+</g>
+<!-- Pool_NM&#45;&gt;Unit_Reforma -->
+<g id="edge4" class="edge">
+<title>Pool_NM&#45;&gt;Unit_Reforma</title>
+<path fill="none" stroke="#1e293b" d="M244.86,-440.2C277.88,-440.2 333.5,-440.2 333.5,-440.2 333.5,-440.2 333.5,-509.05 333.5,-509.05"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="331.75,-509.05 333.5,-514.05 335.25,-509.05 331.75,-509.05"/>
+</g>
+<!-- Pool_NM&#45;&gt;Blend_GPR -->
+<g id="edge20" class="edge">
+<title>Pool_NM&#45;&gt;Blend_GPR</title>
+<path fill="none" stroke="#1e293b" d="M248.21,-431.2C315.53,-431.2 484.5,-431.2 484.5,-431.2 484.5,-431.2 484.5,-622.2 484.5,-622.2 484.5,-622.2 501.69,-622.2 501.69,-622.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="501.69,-623.95 506.69,-622.2 501.69,-620.45 501.69,-623.95"/>
+</g>
+<!-- Pool_NM&#45;&gt;Blend_GRE -->
+<g id="edge25" class="edge">
+<title>Pool_NM&#45;&gt;Blend_GRE</title>
+<path fill="none" stroke="#1e293b" d="M244.79,-422.2C319.5,-422.2 544.5,-422.2 544.5,-422.2 544.5,-422.2 544.5,-463.3 544.5,-463.3"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="542.75,-463.3 544.5,-468.3 546.25,-463.3 542.75,-463.3"/>
+</g>
+<!-- Pool_GR -->
+<g id="node15" class="node">
+<title>Pool_GR</title>
+<ellipse fill="#fde68a" stroke="black" cx="445.5" cy="-622.2" rx="27" ry="18"/>
+<text text-anchor="middle" x="445.5" y="-619.08" font-family="Helvetica,sans-Serif" font-size="10.00">GR</text>
+</g>
+<!-- Unit_Reforma&#45;&gt;Pool_GR -->
+<g id="edge15" class="edge">
+<title>Unit_Reforma&#45;&gt;Pool_GR</title>
+<path fill="none" stroke="#1e293b" d="M333.5,-602.56C333.5,-614.48 333.5,-624.2 333.5,-624.2 333.5,-624.2 411.87,-624.2 411.87,-624.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="411.87,-625.95 416.87,-624.2 411.87,-622.45 411.87,-625.95"/>
 </g>
 <!-- Pool_OC -->
-<g id="node16" class="node">
+<g id="node13" class="node">
 <title>Pool_OC</title>
 <ellipse fill="#fde68a" stroke="black" cx="445.5" cy="-274.2" rx="27" ry="18"/>
 <text text-anchor="middle" x="445.5" y="-271.07" font-family="Helvetica,sans-Serif" font-size="10.00">OC</text>
@@ -278,8 +278,20 @@
 <path fill="none" stroke="#1e293b" d="M377.61,-274.2C377.61,-274.2 411.74,-274.2 411.74,-274.2"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="411.74,-275.95 416.74,-274.2 411.74,-272.45 411.74,-275.95"/>
 </g>
+<!-- Pool_GC -->
+<g id="node14" class="node">
+<title>Pool_GC</title>
+<ellipse fill="#fde68a" stroke="black" cx="445.5" cy="-366.2" rx="27" ry="18"/>
+<text text-anchor="middle" x="445.5" y="-363.07" font-family="Helvetica,sans-Serif" font-size="10.00">GC</text>
+</g>
+<!-- Unit_Craqueamento&#45;&gt;Pool_GC -->
+<g id="edge16" class="edge">
+<title>Unit_Craqueamento&#45;&gt;Pool_GC</title>
+<path fill="none" stroke="#1e293b" d="M369.5,-342.7C369.5,-351.54 369.5,-358.2 369.5,-358.2 369.5,-358.2 414.52,-358.2 414.52,-358.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="414.52,-359.95 419.52,-358.2 414.52,-356.45 414.52,-359.95"/>
+</g>
 <!-- Pool_LB -->
-<g id="node15" class="node">
+<g id="node16" class="node">
 <title>Pool_LB</title>
 <ellipse fill="#fde68a" stroke="black" cx="445.5" cy="-43.2" rx="27" ry="18"/>
 <text text-anchor="middle" x="445.5" y="-40.07" font-family="Helvetica,sans-Serif" font-size="10.00">LB</text>
@@ -290,17 +302,17 @@
 <path fill="none" stroke="#1e293b" d="M382.81,-43.2C382.81,-43.2 411.54,-43.2 411.54,-43.2"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="411.54,-44.95 416.54,-43.2 411.54,-41.45 411.54,-44.95"/>
 </g>
-<!-- Pool_GR -->
-<g id="node14" class="node">
-<title>Pool_GR</title>
-<ellipse fill="#fde68a" stroke="black" cx="445.5" cy="-622.2" rx="27" ry="18"/>
-<text text-anchor="middle" x="445.5" y="-619.08" font-family="Helvetica,sans-Serif" font-size="10.00">GR</text>
+<!-- Pool_OC&#45;&gt;Blend_OLC -->
+<g id="edge34" class="edge">
+<title>Pool_OC&#45;&gt;Blend_OLC</title>
+<path fill="none" stroke="#1e293b" d="M445.5,-255.96C445.5,-227.86 445.5,-177.2 445.5,-177.2 445.5,-177.2 501.49,-177.2 501.49,-177.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="501.49,-178.95 506.49,-177.2 501.49,-175.45 501.49,-178.95"/>
 </g>
-<!-- Unit_Reforma&#45;&gt;Pool_GR -->
-<g id="edge15" class="edge">
-<title>Unit_Reforma&#45;&gt;Pool_GR</title>
-<path fill="none" stroke="#1e293b" d="M333.5,-602.56C333.5,-614.48 333.5,-624.2 333.5,-624.2 333.5,-624.2 411.87,-624.2 411.87,-624.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="411.87,-625.95 416.87,-624.2 411.87,-622.45 411.87,-625.95"/>
+<!-- Pool_OC&#45;&gt;Blend_QAV -->
+<g id="edge31" class="edge">
+<title>Pool_OC&#45;&gt;Blend_QAV</title>
+<path fill="none" stroke="#1e293b" d="M472.99,-274.2C472.99,-274.2 501.66,-274.2 501.66,-274.2"/>
+<polygon fill="#1e293b" stroke="#1e293b" points="501.66,-275.95 506.66,-274.2 501.66,-272.45 501.66,-275.95"/>
 </g>
 <!-- Pool_GC&#45;&gt;Blend_GPR -->
 <g id="edge23" class="edge">
@@ -337,18 +349,6 @@
 <title>Pool_LB&#45;&gt;Blend_LUB</title>
 <path fill="none" stroke="#1e293b" d="M472.99,-43.2C472.99,-43.2 501.66,-43.2 501.66,-43.2"/>
 <polygon fill="#1e293b" stroke="#1e293b" points="501.66,-44.95 506.66,-43.2 501.66,-41.45 501.66,-44.95"/>
-</g>
-<!-- Pool_OC&#45;&gt;Blend_OLC -->
-<g id="edge34" class="edge">
-<title>Pool_OC&#45;&gt;Blend_OLC</title>
-<path fill="none" stroke="#1e293b" d="M445.5,-255.96C445.5,-227.86 445.5,-177.2 445.5,-177.2 445.5,-177.2 501.49,-177.2 501.49,-177.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="501.49,-178.95 506.49,-177.2 501.49,-175.45 501.49,-178.95"/>
-</g>
-<!-- Pool_OC&#45;&gt;Blend_QAV -->
-<g id="edge31" class="edge">
-<title>Pool_OC&#45;&gt;Blend_QAV</title>
-<path fill="none" stroke="#1e293b" d="M472.99,-274.2C472.99,-274.2 501.66,-274.2 501.66,-274.2"/>
-<polygon fill="#1e293b" stroke="#1e293b" points="501.66,-275.95 506.66,-274.2 501.66,-272.45 501.66,-275.95"/>
 </g>
 </g>
 </svg>

@@ -54,6 +54,7 @@ _BASE_STYLES: Dict[str, Dict[str, str]] = {
         "fillcolor": BLEND_COLOR,
         "fontname": "Helvetica",
         "fontsize": "10",
+        "height": "0.5",
     },
 }
 
@@ -107,8 +108,8 @@ def flowchart(
     # -----------------------------------------------------------------------
     # fast look-ups
     # -----------------------------------------------------------------------
-    crude_names: Set[str] = set(refinery.crudes.names())
-    blend_names: Set[str] = set(refinery.blends.names())
+    crude_names: Set[str] = set(refinery.crudes.names)
+    blend_names: Set[str] = set(refinery.blends.names)
     unit_objs = tuple(refinery.units)
     pool_objs = tuple(refinery.pools)
 
@@ -166,7 +167,7 @@ def flowchart(
 
     def _edge_unit_feeds() -> Iterable[Tuple[str, str]]:
         for u in unit_objs:
-            for f in u.feeds:
+            for f in u.yields.keys():
                 skind = "Crude" if f in crude_names else "Pool"
                 sname = f if skind == "Crude" else pool_group[f]
                 yield f"{skind}_{sname}", f"Unit_{u.name}"

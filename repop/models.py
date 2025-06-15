@@ -1,125 +1,99 @@
 """
-Refinery modeling and optimization using Pydantic v2 and Pyomo.
-
-This module provides a framework for building, validating, and optimizing
-refinery process models. It leverages Pydantic for robust data modeling and
-validation, and Pyomo for mathematical optimization. Key features include
-modeling of Pools, Blends (with component ratios), and customizable quality
-constraints via a flexible function registration system.
-
+REPOP - Refinery modelling and optimisation
 Author: Gabriel Braun, 2025
 """
+
+from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Callable, ClassVar, Dict, List, Optional
 
-from pydantic import BaseModel, Field, computed_field, field_validator, model_validator
-from pyomo.environ import (
-    ConcreteModel,
-    Constraint,
-    ConstraintList,
-    Expression,
-    NonNegativeReals,
-    Objective,
-    Set,
-    SolverFactory,
-    Var,
-    maximize,
-    value,
-)
+import pydantic as pyd
+import pyomo.environ as pyo
 
-from repop.utils import ModelList
+from repop.utils import ModelList, VarMap
 from repop.viz import flowchart
 
-# Type alias for the blending function signature.
-# (blend_name,
-#  constraint_props, # dict of properties for this constraint
-#  blend_qtys,       # map of blend_name -> blend quantity Var
-#  pool_allocs,      # map of pool_name -> allocation Var for this blend
-#  pool_properties)  # map of pool_name -> its properties dict
-BlendFunc = Callable[
-    [str, Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Dict[str, float]]],
-    Any,
-]
+# ----------------------------------------------------------------------
+# TYPE ALIAS FOR CUSTOM BLEND CONSTRAINT FUNCTIONS
+# ----------------------------------------------------------------------
+ConsFunc = Callable[["Refinery", str, Dict[str, Any]], Any]
+ObjFunc = Callable[["Refinery", pyo.ConcreteModel], Any]
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Data Models
-# ──────────────────────────────────────────────────────────────────────────────
-class Metadata(BaseModel):
-    """Represents the metadata for the refinery model."""
-
-    description: str
-    version: str
-    last_updated: str
-    author: str
+# ======================================================================
+# DATA MODELS (with runtime Pyomo handles as PrivateAttr)
+# ======================================================================
 
 
-class Pool(BaseModel):
-    """Represents an intermediate product pool in the refinery."""
-
+class Crude(pyd.BaseModel):
     name: str
-    quantity: float = 0.0  # Result field populated after optimization
-    level: int = 1  # Topological level, calculated by Refinery
+    level: int = 0
     properties: Dict[str, float] = {}
 
-
-class Crude(BaseModel):
-    """Represents a crude oil stream available to the refinery."""
-
-    name: str
+    cost: float = 0.0
     availability: float
-    cost: float = 0.0
-    quantity: float = 0.0  # Result field populated after optimization
+
+    _alloc: VarMap = pyd.PrivateAttr(default_factory=VarMap)
 
 
-class Unit(BaseModel):
-    """Represents a processing unit in the refinery."""
-
+class Pool(pyd.BaseModel):
     name: str
-    capacity: float
-    level: int = 1  # Topological level, calculated by Refinery
+    level: int = 1
+    properties: Dict[str, float] = {}
+
+    _feeds: VarMap = pyd.PrivateAttr(default_factory=VarMap)
+    _alloc: VarMap = pyd.PrivateAttr(default_factory=VarMap)
+
+
+class Unit(pyd.BaseModel):
+    name: str
+    level: int = 1
     cost: float = 0.0
-    yields: Dict[str, Dict[str, float]]  # Maps feed name to {output_pool: yield}
+    capacity: float
+    yields: Dict[str, Dict[str, float]]
+    constraints: Optional[List[BlendConstraint]] = None
 
-    @computed_field
+    _feeds: VarMap = pyd.PrivateAttr(default_factory=VarMap)
+    _exits: VarMap = pyd.PrivateAttr(default_factory=VarMap)
+
+    @pyd.computed_field
     @property
-    def feeds(self) -> List[str]:
-        """Lists all possible input feeds for this unit."""
-        return list(self.yields.keys())
+    def yields_T(self) -> Dict[str, Dict[str, float]]:
+        """
+        exit -> {feed: yield} mapping.
+        """
+        exit_yields = defaultdict(dict)
+        for f_name, y_map in self.yields.items():
+            for e_name, y in y_map.items():
+                exit_yields[e_name][f_name] = y
+        return dict(exit_yields)
 
 
-class BlendConstraint(BaseModel):
-    """A generic quality constraint to be applied to a blend."""
-
-    name: str = Field(alias="type")
+class BlendConstraint(pyd.BaseModel):
+    name: str = pyd.Field(alias="type")
     properties: Dict[str, Any]
 
-    @model_validator(mode="before")
+    @pyd.model_validator(mode="before")
     @classmethod
-    def _assemble_properties(cls, data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Gathers all fields other than 'name' or 'type' into a 'properties' dict.
-        This allows defining constraints with a flat structure in the input file.
-        """
+    def _gather_props(cls, data: Dict[str, Any]) -> Dict[str, Any]:
         data["properties"] = {
             k: v for k, v in data.items() if k not in ("name", "type")
         }
         return data
 
 
-class Blend(BaseModel):
-    """Represents a final product blend."""
-
+class Blend(pyd.BaseModel):
     name: str
     price: float
     components: List[str]
     blend_ratios: Optional[List[Dict[str, float]]] = None
     constraints: Optional[List[BlendConstraint]] = None
-    quantity: float = 0.0  # Result field populated after optimization
 
-    @field_validator("blend_ratios", mode="before")
+    _feeds: VarMap = pyd.PrivateAttr(default_factory=VarMap)
+
+    @pyd.field_validator("blend_ratios", mode="before")
     @classmethod
     def _validate_ratios(cls, v: Any, info) -> Optional[List[Dict[str, float]]]:
         """
@@ -151,58 +125,71 @@ class Blend(BaseModel):
         return normalized
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Refinery Orchestrator
-# ──────────────────────────────────────────────────────────────────────────────
-class Refinery(BaseModel):
+# ----------------------------------------------------------------------
+# REFINERY ORCHESTRATOR
+# ----------------------------------------------------------------------
+class Refinery(pyd.BaseModel):
     """
-    The main class that orchestrates the refinery model. It holds the data,
-    builds the optimization problem, solves it, and stores the results.
+    Refinery
     """
 
-    metadata: Metadata
+    metadata: Any
     crudes: ModelList[Crude]
+    pools: ModelList[Pool]
     units: ModelList[Unit]
     blends: ModelList[Blend]
-    pools: ModelList[Pool]
 
+    # private attrs
+    _obj_name: str = pyd.PrivateAttr(default="max_profit")
+    _model: pyo.ConcreteModel | None = pyd.PrivateAttr(default=None)
+
+    # class vars
     round_decimals: ClassVar[int] = 6
-    blend_constraints: ClassVar[Dict[str, BlendFunc]] = {}
+    b_cons: ClassVar[Dict[str, ConsFunc]] = {}
+    u_cons: ClassVar[Dict[str, ConsFunc]] = {}
+    obj_fns: ClassVar[Dict[str, ObjFunc]] = {}
 
-    class Config:
-        extra = "ignore"
-
-    @model_validator(mode="before")
+    @pyd.model_validator(mode="before")
     @classmethod
     def _prepare_input_data(cls, values: dict) -> dict:
         """
         Pre-processes the input dictionary to conform to the Pydantic model structure.
         It transforms dicts of objects into lists and auto-generates the pool list.
         """
-        values["crudes"] = [
-            {"name": n, **d} for n, d in values.get("crudes", {}).items()
-        ]
-        values["units"] = [{"name": n, **d} for n, d in values.get("units", {}).items()]
-
-        raw_blending = values.get("blending", {})
-        values["blends"] = [{"name": n, **d} for n, d in raw_blending.items()]
+        c_map = {c_name: dict(c) for c_name, c in values.pop("crudes", {}).items()}
+        u_map = {u_name: dict(u) for u_name, u in values.pop("units", {}).items()}
+        b_map = {b_name: dict(b) for b_name, b in values.pop("blends", {}).items()}
+        p_props = values.pop("pool_properties", {})
 
         # Automatically discover all pools from unit outputs and blend components
-        pool_set: set[str] = set()
-        for u in values["units"]:
+        p_set = set()
+        for u in u_map.values():
             for feed_map in u.get("yields", {}).values():
-                pool_set.update(feed_map.keys())
-        for b in raw_blending.values():
-            pool_set.update(b.get("components", []))
+                p_set.update(feed_map.keys())
+        for b in b_map.values():
+            p_set.update(b.get("feeds", []))
 
-        # Create pool objects using the discovered names and provided properties
-        props = values.pop("pool_properties", {})
-        values["pools"] = [
-            {"name": p, "properties": props.get(p, {})} for p in sorted(pool_set)
+        # Builds up `values` dict
+        values["blends"] = [{"name": b_name, **b} for b_name, b in b_map.items()]
+        values["units"] = [{"name": u_name, **u} for u_name, u in u_map.items()]
+        values["crudes"] = [
+            {
+                "name": c_name,
+                "properties": p_props.get(c_name, {}),
+                **c,
+            }
+            for c_name, c in c_map.items()
         ]
+        values["pools"] = [
+            {
+                "name": p_name,
+                "properties": p_props.get(p_name, {}),
+            }
+            for p_name in p_set
+        ]
+
         return values
 
-    @model_validator(mode="after")
     def _assign_topological_levels(self) -> "Refinery":
         """
         Assigns a topological `.level` to each Unit and Pool. This is useful for
@@ -220,12 +207,12 @@ class Refinery(BaseModel):
                 for pool in out_map:
                     producers[pool].append(unit.name)
 
-        crude_set = set(self.crudes.names())
+        crude_set = set(self.crudes.names)
         levels: Dict[str, int] = {}
 
         # 2. Initialize levels for units that only consume crudes (base case)
         for unit in self.units:
-            if all(feed in crude_set for feed in unit.feeds):
+            if all(feed in crude_set for feed in unit.yields.keys()):
                 levels[unit.name] = 1
 
         # 3. Iteratively assign levels to remaining units based on their feeds
@@ -239,7 +226,7 @@ class Refinery(BaseModel):
                 # Try to compute the unit's level from its feed producers
                 feed_levels = []
                 can_compute_level = True
-                for feed in unit.feeds:
+                for feed in unit.yields.keys():
                     if feed in crude_set:
                         feed_levels.append(0)
                     else:  # Feed is an intermediate pool
@@ -279,184 +266,166 @@ class Refinery(BaseModel):
 
         return self
 
+    def _define_pyomo_vars(self) -> None:
+        """
+        Pyomo...
+        """
+        mdl = self._model
+
+        # Sets
+        mdl.C = pyo.Set(initialize=sorted(self.crudes.names))
+        mdl.P = pyo.Set(initialize=sorted(self.pools.names))
+        mdl.U = pyo.Set(initialize=sorted(self.units.names))
+        mdl.B = pyo.Set(initialize=sorted(self.blends.names))
+
+        b_feeds = {(b.name, f) for b in self.blends for f in b.components}
+        u_feeds = {(u.name, f) for u in self.units for f in u.yields.keys()}
+        u_exits = {
+            (u.name, e) for u in self.units for y in u.yields.values() for e in y.keys()
+        }
+
+        mdl.Bfeeds = pyo.Set(dimen=2, initialize=sorted(b_feeds))
+        mdl.Ufeeds = pyo.Set(dimen=2, initialize=sorted(u_feeds))
+        mdl.Uexits = pyo.Set(dimen=2, initialize=sorted(u_exits))
+
+        # Variables: feeds/allocation
+        mdl.b_feeds = pyo.Var(mdl.Bfeeds, domain=pyo.NonNegativeReals)
+        mdl.u_feeds = pyo.Var(mdl.Ufeeds, domain=pyo.NonNegativeReals)
+        mdl.u_exits = pyo.Var(mdl.Uexits, domain=pyo.NonNegativeReals)
+
+        # Attach handles
+        for b_name, f_name in b_feeds:
+            var = mdl.b_feeds[b_name, f_name]
+            self.blends[b_name]._feeds[f_name] = var
+            self.pools[f_name]._alloc[b_name] = var
+
+        for u_name, f_name in u_feeds:
+            var = mdl.u_feeds[u_name, f_name]
+            if f_name in self.crudes:
+                self.units[u_name]._feeds[f_name] = var
+                self.crudes[f_name]._alloc[u_name] = var
+            elif f_name in self.pools:
+                self.units[u_name]._feeds[f_name] = var
+                self.pools[f_name]._alloc[u_name] = var
+
+        for u_name, e_name in u_exits:
+            var = mdl.u_exits[u_name, e_name]
+            self.units[u_name]._exits[e_name] = var
+            self.pools[e_name]._feeds[u_name] = var
+
+    def _define_pyomo_cons(self) -> None:
+        """
+        Pyomo...
+        """
+        mdl = self._model
+
+        # Core Constraints
+        @mdl.Constraint(mdl.Uexits)
+        def unit_exits_def(_m, u_name, p_name):
+            u = self.units[u_name]
+            e = sum(u._feeds[f_name] * y for f_name, y in u.yields_T[p_name].items())
+            return u._exits[p_name] == e
+
+        @mdl.Constraint(mdl.P)
+        def pools_balance(_m, p_name):
+            p = self.pools[p_name]
+            return p._alloc.sum() <= p._feeds.sum()
+
+        @mdl.Constraint(mdl.C)
+        def crude_avaiability(_m, c_name):
+            c = self.crudes[c_name]
+            return c._alloc.sum() <= c.availability
+
+        @mdl.Constraint(mdl.U)
+        def unit_capacity(_m, u_name):
+            u = self.units[u_name]
+            return u._feeds.sum() <= u.capacity
+
+        # custom blend constraints
+        mdl.custom_blend_cons = pyo.ConstraintList()
+        for b in self.blends:
+            for spec in b.constraints or []:
+                fn = self.b_cons.get(spec.name.lower())
+                if fn is None:
+                    raise KeyError(f"Blend constraint '{spec.name}' not registered.")
+                mdl.custom_blend_cons.add(fn(self, b.name, spec.properties))
+
+        # custom unit constraints
+        mdl.custom_unit_cons = pyo.ConstraintList()
+        for u in self.units:
+            for spec in u.constraints or []:
+                fn = self.u_cons.get(spec.name.lower())
+                if fn is None:
+                    raise KeyError(f"Unit constraint '{spec.name}' not registered.")
+                mdl.custom_unit_cons.add(fn(self, u.name, spec.properties))
+
+        # blend ratio constraints
+        ratio_triplets = [
+            (b.name, k, p, coeff)
+            for b in self.blends
+            for k, row in enumerate(b.blend_ratios or [])
+            for p, coeff in row.items()
+        ]
+        if ratio_triplets:
+            aux_keys = {(b, k) for (b, k, _p, _c) in ratio_triplets}
+            mdl.r_aux = pyo.Var(aux_keys, domain=pyo.NonNegativeReals)
+
+            @mdl.Constraint(ratio_triplets)
+            def fix_ratios(_m, b, k, p, coeff):
+                return mdl.b_feeds[b, p] == coeff * mdl.r_aux[b, k]
+
+    @pyd.model_validator(mode="after")
+    def _create_model(self) -> "Refinery":
+        """
+        Pyomo...
+        """
+        self._assign_topological_levels()
+
+        self._model = pyo.ConcreteModel("RefineryCore")
+        self._define_pyomo_vars()
+        self._define_pyomo_cons()
+
+        # objective
+        expr = self.obj_fns[self._obj_name](self, self._model)
+        self._model.objective = pyo.Objective(expr=expr, sense=pyo.maximize)
+
+        return self
+
     @classmethod
-    def blend_constraint(cls, name: str | None = None):
-        """
-        A decorator to register a new blend quality constraint function.
-
-        Args:
-            name (str, optional): The name to register the constraint with.
-                If None, the function's name is used.
-        """
-
-        def decorator(constraint_func: Callable):
-            constraint_name = name or constraint_func.__name__
-            key = constraint_name.strip().replace(" ", "_").lower()
-            cls.blend_constraints[key] = constraint_func
-            return constraint_func
+    def blend_constraint(cls, name: str):
+        def decorator(fn: ConsFunc):
+            cls.b_cons[name.lower()] = fn
+            return fn
 
         return decorator
 
-    def optimize(self, solver_name: str = "glpk", tee: bool = False) -> ConcreteModel:
-        """
-        Builds and solves the Pyomo optimization model for the refinery.
+    @classmethod
+    def unit_constraint(cls, name: str):
+        def decorator(fn: ConsFunc):
+            cls.u_cons[name.lower()] = fn
+            return fn
 
-        Args:
-            solver_name (str): The name of the solver to use (e.g., 'gurobi', 'glpk').
-            tee (bool): If True, streams the solver's output to the console.
+        return decorator
 
-        Returns:
-            ConcreteModel: The solved Pyomo model instance.
-        """
-        mdl = ConcreteModel("RefineryProfitMaximization")
+    @classmethod
+    def objective(cls, name: str):
+        def decorator(fn: ObjFunc):
+            cls.obj_fns[name] = fn
+            return fn
 
-        # --- Sets ---
-        crudes = self.crudes.names()
-        units = self.units.names()
-        blends = self.blends.names()
-        pools = self.pools.names()
+        return decorator
 
-        mdl.Crudes = Set(initialize=sorted(crudes))
-        mdl.Units = Set(initialize=sorted(units))
-        mdl.Blends = Set(initialize=sorted(blends))
-        mdl.Pools = Set(initialize=sorted(pools))
+    def optimize(
+        self, *, solver_name: str = "glpk", tee: bool = False
+    ) -> pyo.ConcreteModel:
+        if self._model is None:
+            raise RuntimeError("Pyomo model not initialised.")
+        pyo.SolverFactory(solver_name).solve(self._model, tee=tee)
+        return self._model
 
-        # --- Variables ---
-        # Feed quantity to each unit from a crude or pool
-        feed_idx = [(u, f) for u in units for f in self.units[u].feeds]
-        mdl.feed_qty = Var(Set(initialize=feed_idx), domain=NonNegativeReals)
-
-        # Quantity of each pool allocated to a blend
-        mdl.allocate = Var(mdl.Blends, mdl.Pools, domain=NonNegativeReals)
-
-        # Total quantity of each final blend produced
-        mdl.blend_qty = Var(mdl.Blends, domain=NonNegativeReals)
-
-        # --- Expressions ---
-        # Total production of each pool from all unit outputs
-        mdl.Production = Expression(
-            mdl.Pools,
-            rule=lambda m, p: sum(
-                self.units[u].yields[f].get(p, 0.0) * m.feed_qty[u, f]
-                for u in units
-                for f in self.units[u].feeds
-                if p in self.units[u].yields[f]
-            ),
-        )
-
-        # --- Constraints ---
-        # 1. Unit Capacity: Total feed to a unit cannot exceed its capacity.
-        mdl.UnitCapacity = Constraint(
-            mdl.Units,
-            rule=lambda m, u: sum(m.feed_qty[u, f] for f in self.units[u].feeds)
-            <= self.units[u].capacity,
-        )
-
-        # 2. Crude Availability: Total crude used cannot exceed its availability.
-        mdl.CrudeLimit = Constraint(
-            mdl.Crudes,
-            rule=lambda m, c: sum(
-                m.feed_qty[u, c] for u in units if c in self.units[u].feeds
-            )
-            <= self.crudes[c].availability,
-        )
-
-        # 3. Blend Definition: The total quantity of a blend is the sum of its components.
-        mdl.BlendDef = Constraint(
-            mdl.Blends,
-            rule=lambda m, b: m.blend_qty[b]
-            == sum(m.allocate[b, p] for p in self.blends[b].components),
-        )
-
-        # 4. Pool Mass Balance: Total consumption of a pool (as feed to units or
-        #    for blending) cannot exceed its total production.
-        pool_to_blends = {
-            p: [b for b in blends if p in self.blends[b].components] for p in pools
-        }
-        mdl.PoolBalance = Constraint(
-            mdl.Pools,
-            rule=lambda m, p: (
-                sum(m.feed_qty[u, p] for u in units if p in self.units[u].feeds)
-                + sum(m.allocate[b, p] for b in pool_to_blends.get(p, []))
-                <= m.Production[p]
-            ),
-        )
-
-        # 5. Custom Quality Constraints: Apply user-defined blending rules.
-        mdl.Quality = ConstraintList()
-        blend_qtys_map = {b: mdl.blend_qty[b] for b in blends}
-        for b_obj in self.blends:
-            b = b_obj.name
-            pool_allocs = {p: mdl.allocate[b, p] for p in b_obj.components}
-            pool_props = {p: self.pools[p].properties for p in b_obj.components}
-            for cons in b_obj.constraints or []:
-                key = cons.name.strip().replace(" ", "_").lower()
-                fn = self.blend_constraints.get(key)
-                if fn is None:
-                    raise KeyError(f"Blend constraint '{cons.name}' is not registered.")
-                mdl.Quality.add(
-                    fn(b, cons.properties, blend_qtys_map, pool_allocs, pool_props)
-                )
-
-        # 6. Fixed Blend Ratios: Enforce fixed proportions for blend components.
-        if any(b.blend_ratios for b in self.blends):
-            ratio_map = {
-                (b.name, k, p): r
-                for b in self.blends
-                for k, row in enumerate(b.blend_ratios or [])
-                for p, r in row.items()
-            }
-            if ratio_map:
-                ratio_keys = sorted({(b, k) for (b, k, _) in ratio_map})
-                triplets = sorted(ratio_map)
-                mdl.ratio_aux = Var(Set(initialize=ratio_keys), domain=NonNegativeReals)
-                mdl.RatioFix = Constraint(
-                    Set(initialize=triplets),
-                    rule=lambda m, b, k, p: m.allocate[b, p]
-                    == ratio_map[(b, k, p)] * m.ratio_aux[b, k],
-                )
-
-        # --- Objective Function ---
-        # Maximize profit = (revenue from blends) - (unit operating costs) - (crude costs)
-        mdl.Profit = Objective(
-            rule=lambda m: (
-                sum(self.blends[b].price * m.blend_qty[b] for b in blends)
-                - sum(
-                    self.units[u].cost
-                    * sum(m.feed_qty[u, f] for f in self.units[u].feeds)
-                    for u in units
-                )
-                - sum(
-                    self.crudes[c].cost
-                    * sum(m.feed_qty[u, c] for u in units if c in self.units[u].feeds)
-                    for c in crudes
-                )
-            ),
-            sense=maximize,
-        )
-
-        # Solve the model
-        SolverFactory(solver_name).solve(mdl, tee=tee)
-
-        # Populate results back into the Pydantic models
-        prec = self.round_decimals
-        for c in crudes:
-            qty = sum(
-                float(value(mdl.feed_qty[u, c]))
-                for u in units
-                if (u, c) in mdl.feed_qty.index_set()
-            )
-            self.crudes[c].quantity = round(qty, prec)
-
-        for b in blends:
-            self.blends[b].quantity = round(float(value(mdl.blend_qty[b])), prec)
-
-        for p in pools:
-            prod = float(value(mdl.Production[p]))
-            self.pools[p].quantity = round(prod, prec)
-
-        return mdl
-
+    # -------------------------------------------------------------- #
+    # FLOW-CHART HELPER (unchanged)
+    # -------------------------------------------------------------- #
     def generate_flowchart(
         self,
         *,
@@ -464,7 +433,15 @@ class Refinery(BaseModel):
         file_format: str | None = None,
         theme: Dict[str, Dict[str, str]] | None = None,
     ) -> Path:
-        """
-        Build and render a left-to-right process flow diagram for the given refinery.
-        """
-        flowchart(self, file_name=file_name, file_format=file_format, theme=theme)
+        return flowchart(
+            self, file_name=file_name, file_format=file_format, theme=theme
+        )
+
+
+@Refinery.objective("max_profit")
+def _default_profit(ref: "Refinery", m: pyo.ConcreteModel) -> pyo.Expr:
+    revenue = sum(ref.blends[b]._feeds.sum() * ref.blends[b].price for b in m.B)
+    unit_op = sum(ref.units[u]._feeds.sum() * ref.units[u].cost for u in m.U)
+    crude_c = sum(ref.crudes[c]._alloc.sum() * ref.crudes[c].cost for c in m.C)
+
+    return revenue - unit_op - crude_c

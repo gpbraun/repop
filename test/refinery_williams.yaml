@@ -51,7 +51,7 @@ units:
     yields:
       "R": { "LB": 0.50 }
 
-blending:
+blends:
   "PMF":
     price: 700
     components: ["LN", "MN", "HN", "RG", "CG"]
@@ -86,9 +86,9 @@ blending:
     price: 150
     components: ["LB"]
     constraints:
-      - type: min production
+      - type: min_production
         value: 500
-      - type: max production
+      - type: max_production
         value: 1000
 
 pool_properties:
