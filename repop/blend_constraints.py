@@ -13,7 +13,7 @@ from .models import Blend, Refinery
 
 
 # ---------------------------------------------------------------------------
-# HELPER – weighted-property sum for a given blend
+# HELPER - weighted-property sum for a given blend
 # ---------------------------------------------------------------------------
 def _weighted_sum(ref: Refinery, b_name: str, prop_key: str):
     """Σ allocation * property_value for the specified property key."""

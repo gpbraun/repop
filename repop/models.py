@@ -28,7 +28,7 @@ ObjFunc = Callable[["Refinery"], Any]
 class Crude(pyd.BaseModel):
     name: str
     level: int = 0
-    properties: Dict[str, float] = {}
+    properties: Dict[str, float] = pyd.Field(default_factory=dict)
 
     cost: float = 0.0
     availability: float
@@ -39,7 +39,7 @@ class Crude(pyd.BaseModel):
 class Pool(pyd.BaseModel):
     name: str
     level: int = 1
-    properties: Dict[str, float] = {}
+    properties: Dict[str, float] = pyd.Field(default_factory=dict)
 
     _feeds: VarMap = pyd.PrivateAttr(default_factory=VarMap)
     _alloc: VarMap = pyd.PrivateAttr(default_factory=VarMap)
@@ -47,7 +47,7 @@ class Pool(pyd.BaseModel):
 
 class CustomConstraint(pyd.BaseModel):
     name: str = pyd.Field(alias="type")
-    properties: Dict[str, Any]
+    properties: Dict[str, Any] = pyd.Field(default_factory=dict)
 
     @pyd.model_validator(mode="before")
     @classmethod
