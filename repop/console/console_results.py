@@ -1,13 +1,9 @@
 """
-Console-side reporting for REPOP
---------------------------------
-Pretty-prints a solved Refinery instance with Rich.
+Console reporting for a solved REPOP Refinery
+============================================
 
-Usage
------
->>> from repop.console_results import log_results
->>> ref.optimize()
->>> log_results(ref)
+Call ``log_results(ref)`` after ``ref.optimize()`` and enjoy colourful
+Rich tables in your terminal.
 """
 
 from __future__ import annotations
@@ -24,196 +20,169 @@ from rich.table import Table
 from repop.models import Refinery
 
 
-# ── helpers ──────────────────────────────────────────────────────────
-def _norm_zero(v: float, prec: int) -> float:
+# ────────────────────────────────────────────────────────────────────
+# basic formatting helpers
+# ────────────────────────────────────────────────────────────────────
+def _zero(v: float, prec: int) -> float:
     return 0.0 if round(v, prec) == 0 else v
 
 
-def _fmt_qty(v: float, prec: int = 2) -> str:
-    v = _norm_zero(v, prec)
+def _qty(v: float, prec: int = 2) -> str:
+    v = _zero(v, prec)
     txt = f"{v:,.{prec}f}"
     return f"[magenta]{txt}[/magenta]" if abs(v) > 1e-9 else f"[dim]{txt}[/dim]"
 
 
-def _fmt_money(v: float, kind: str = "normal", symbol: str = "$") -> str:
-    v = _norm_zero(v, 2)
-    txt = f"{symbol}{v:,.2f}"
-    if abs(v) < 1e-9:
-        return f"[dim]{txt}[/dim]"
-    colour = {"rev": "green", "cost": "red"}.get(kind, "magenta")
-    return f"[{colour}]{txt}[/{colour}]"
+def _money(v: float, colour: str, sym: str = "$") -> str:
+    v = _zero(v, 2)
+    txt = f"{sym}{v:,.2f}"
+    return f"[{colour}]{txt}[/{colour}]" if abs(v) > 1e-9 else f"[dim]{txt}[/dim]"
 
 
-def _style_name(name: str) -> str:
+def _cyan(name: str) -> str:
     return f"[bold cyan]{name}[/bold cyan]"
 
 
-# ── public API ───────────────────────────────────────────────────────
-def log_results(ref: Refinery, *, console: Console | None = None) -> None:
-    """
-    Pretty-print a solved Refinery.
+# ────────────────────────────────────────────────────────────────────
+# utilities
+# ────────────────────────────────────────────────────────────────────
+def group_by_prefix(names: List[str]) -> Dict[str, List[str]]:
+    g: Dict[str, List[str]] = defaultdict(list)
+    for n in sorted(names):
+        g[n.split(".", 1)[0]].append(n)
+    return g
 
-    Parameters
-    ----------
-    ref : Refinery
-        A **solved** refinery instance (`ref.optimize()` already called).
-    console : rich.console.Console | None
-        Optionally pass an existing Console (default: create a new one).
-    """
+
+def sum_map(varmap) -> float:
+    """Shortcut for pyo.value(varmap.sum())."""
+    return pyo.value(varmap.sum())
+
+
+def panel(tbl: Table, title: str, colour: str) -> Panel:
+    return Panel(
+        tbl,
+        title=f"[bold]{title.upper()}[/bold]",
+        title_align="center",
+        border_style=colour,
+        box=box.ROUNDED,
+        width=120,
+        padding=(1, 2),
+    )
+
+
+def new_table() -> Table:
+    return Table(
+        box=box.SIMPLE_HEAD, show_edge=False, expand=True, header_style="white"
+    )
+
+
+# ────────────────────────────────────────────────────────────────────
+# PUBLIC
+# ────────────────────────────────────────────────────────────────────
+def log_results(ref: Refinery, *, console: Console | None = None) -> None:
+    """Pretty-print a solved refinery to the terminal."""
     if ref._model is None:
-        raise RuntimeError("Refinery has no Pyomo model – call optimise() first.")
+        raise RuntimeError("Refinery not solved; call `optimize()` first.")
 
     con = console or Console()
-    m: pyo.ConcreteModel = ref._model  # shorthand
-    hdr_style, WIDTH, PAD = "white", 120, (1, 2)
+    m = ref._model
 
-    # -----------------------------------------------------------------
-    # small builders
-    # -----------------------------------------------------------------
-    def _tbl() -> Table:
-        return Table(
-            box=box.SIMPLE_HEAD, show_edge=False, expand=True, header_style=hdr_style
-        )
+    groups = group_by_prefix([*ref.crudes.names, *ref.pools.names])
 
-    def _panel(tbl: Table, title: str, colour: str) -> Panel:
-        return Panel(
-            tbl,
-            title=f"[bold]{title.upper()}[/bold]",
-            title_align="center",
-            border_style=colour,
-            box=box.ROUNDED,
-            width=WIDTH,
-            padding=PAD,
-        )
-
-    # -----------------------------------------------------------------
-    # overview (profit line)
-    # -----------------------------------------------------------------
-    sales = sum(bl.price * pyo.value(bl._feeds.sum()) for bl in ref.blends)
-    op_cost = sum(u.cost * pyo.value(u._feeds.sum()) for u in ref.units)
-    in_cost = sum(c.cost * pyo.value(c._alloc.sum()) for c in ref.crudes)
+    # ─── overview ───────────────────────────────────────────────────
+    sales = sum(bl.price * sum_map(bl._feeds) for bl in ref.blends)
+    op_cost = sum(u.cost * sum_map(u._feeds) for u in ref.units)
+    in_cost = sum(c.cost * sum_map(c._alloc) for c in ref.crudes)
     profit = sales - op_cost - in_cost
 
-    t = _tbl()
+    t = new_table()
     t.add_column("Metric")
     t.add_column("Value", justify="right")
-    t.add_row("Sales", _fmt_money(sales, "rev"))
-    t.add_row("Op cost", _fmt_money(op_cost, "cost"))
-    t.add_row("In cost", _fmt_money(in_cost, "cost"))
+    t.add_row("Sales", _money(sales, "green"))
+    t.add_row("Op cost", _money(op_cost, "red"))
+    t.add_row("In cost", _money(in_cost, "red"))
     t.add_section()
-    t.add_row("Profit", _fmt_money(profit, "rev"))
-    con.print()
-    con.print(_panel(t, "Overview", "green"))
+    t.add_row("Profit", _money(profit, "green"))
+    con.print("\n", panel(t, "Overview", "green"))
 
-    # -----------------------------------------------------------------
-    # crude summary
-    # -----------------------------------------------------------------
-    t = _tbl()
-    crude_names: List[str] = sorted(c.name for c in ref.crudes)
+    # ─── crudes ────────────────────────────────────────────────────
+    t = new_table()
     t.add_column("Metric")
-    for c in crude_names:
-        t.add_column(_style_name(c), justify="right")
+    for c in ref.crudes.names:
+        t.add_column(_cyan(c), justify="right")
 
-    qtys = [pyo.value(ref.crudes[c]._alloc.sum()) for c in crude_names]
-    costs = [ref.crudes[c].cost * q for c, q in zip(crude_names, qtys)]
-
+    crude_qty = [sum_map(ref.crudes[c]._alloc) for c in ref.crudes.names]
+    crude_cost = [ref.crudes[c].cost * q for c, q in zip(ref.crudes.names, crude_qty)]
     t.add_section()
-    t.add_row("Total", *(_fmt_qty(q) for q in qtys))
-    t.add_row("Cost", *(_fmt_money(c, "cost") for c in costs))
-    con.print(_panel(t, "Crudes", "yellow"))
+    t.add_row("Total", *(_qty(q) for q in crude_qty))
+    t.add_row("Cost", *(_money(c, "red") for c in crude_cost))
+    con.print(panel(t, "Crudes", "yellow"))
 
-    # -----------------------------------------------------------------
-    # unit details (ordered by level)
-    # -----------------------------------------------------------------
-    # build quick group map for prefix-based display
-    groups: Dict[str, List[str]] = defaultdict(list)
-    for nm in sorted([*ref.crudes.names, *ref.pools.names]):
-        groups[nm.split(".", 1)[0]].append(nm)
-
+    # ─── units (ordered by level) ──────────────────────────────────
     for u in sorted(ref.units, key=lambda x: x.level):
-        in_groups = sorted(
-            g for g, ns in groups.items() if any(f in ns for f in u._feeds)
-        )
-        out_groups = sorted(
-            g for g, ns in groups.items() if any(p in ns for p in u._exits)
-        )
+        in_groups = [g for g in groups if any(f in groups[g] for f in u._feeds)]
+        out_groups = [g for g in groups if any(p in groups[g] for p in u._exits)]
 
-        # compute flows
+        # inbound quantities & costs (FIXED)
         q_in = {
-            g: pyo.value(sum(u._feeds[f] for f in groups[g] if f in u._feeds))
+            g: sum(pyo.value(u._feeds[f]) for f in groups[g] if f in u._feeds)
             for g in in_groups
         }
-        cost_in = {g: q_in[g] * u.cost for g in in_groups}
+        cost = {g: u.cost * q for g, q in q_in.items()}
 
-        out_map: Dict[str, Dict[str, float]] = {g: {} for g in out_groups}
+        # outbound matrix
+        out = {og: {ig: 0.0 for ig in in_groups} for og in out_groups}
         for og in out_groups:
             for ig in in_groups:
-                qty = sum(
+                out[og][ig] = sum(
                     u.yields[f].get(p, 0.0) * pyo.value(u._feeds[f])
                     for f in groups[ig]
                     if f in u._feeds
                     for p in groups[og]
                 )
-                out_map[og][ig] = qty
 
-        # rich table
-        t = _tbl()
+        # render
+        t = new_table()
         t.add_column("Yields")
         for ig in in_groups:
-            t.add_column(_style_name(ig), justify="right")
+            t.add_column(_cyan(ig), justify="right")
         t.add_column("Total", justify="right")
 
         for og in out_groups:
-            row = [_style_name(og)]
-            row += [_fmt_qty(out_map[og][ig]) for ig in in_groups]
-            row.append(_fmt_qty(sum(out_map[og].values())))
+            row = [_cyan(og)] + [_qty(out[og][ig]) for ig in in_groups]
+            row.append(_qty(sum(out[og].values())))
             t.add_row(*row)
 
         t.add_section()
         t.add_row(
-            "Total",
-            *(_fmt_qty(q_in[ig]) for ig in in_groups),
-            _fmt_qty(sum(q_in.values())),
+            "Total", *(_qty(q_in[ig]) for ig in in_groups), _qty(sum(q_in.values()))
         )
         t.add_row(
             "Cost",
-            *(_fmt_money(cost_in[ig], "cost") for ig in in_groups),
-            _fmt_money(sum(cost_in.values()), "cost"),
+            *(_money(cost[ig], "red") for ig in in_groups),
+            _money(sum(cost.values()), "red"),
         )
 
-        con.print(_panel(t, f"Unit: {u.name}", "blue"))
+        con.print(panel(t, f"Unit: {u.name}", "blue"))
 
-    # -----------------------------------------------------------------
-    # blending summary
-    # -----------------------------------------------------------------
-    blend_names = sorted(b.name for b in ref.blends)
-    t = _tbl()
+    # ─── blending summary ──────────────────────────────────────────
+    t = new_table()
     t.add_column("Pool")
-    for b in blend_names:
-        t.add_column(_style_name(b), justify="right")
+    for b in ref.blends.names:
+        t.add_column(_cyan(b), justify="right")
 
-    # rows grouped by prefix
-    for g, ns in groups.items():
+    for grp, ns in groups.items():
         if not any(n in ref.pools.names for n in ns):
             continue
-        row = [_style_name(g)]
-        for b in blend_names:
-            qty = pyo.value(sum(ref.blends[b]._feeds.get(n, 0) for n in ns))
-            row.append(_fmt_qty(qty))
+        row = [_cyan(grp)]
+        for b in ref.blends:
+            qty = sum(pyo.value(b._feeds.get(n, 0)) for n in ns)
+            row.append(_qty(qty))
         t.add_row(*row)
 
     t.add_section()
+    t.add_row("Total", *(_qty(sum_map(b._feeds)) for b in ref.blends))
     t.add_row(
-        "Total", *(_fmt_qty(pyo.value(ref.blends[b]._feeds.sum())) for b in blend_names)
+        "Revenue", *(_money(b.price * sum_map(b._feeds), "green") for b in ref.blends)
     )
-    t.add_row(
-        "Revenue",
-        *(
-            _fmt_money(
-                ref.blends[b].price * pyo.value(ref.blends[b]._feeds.sum()), "rev"
-            )
-            for b in blend_names
-        ),
-    )
-
-    con.print(_panel(t, "Blending", "magenta"))
+    con.print(panel(t, "Blending", "magenta"))

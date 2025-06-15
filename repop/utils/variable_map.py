@@ -11,8 +11,5 @@ class VarMap(dict[str, pyo.Var]):
     Mapping str → Pyomo Var with a helper to add items safely.
     """
 
-    def sum_value(self) -> "NumericValue":
-        return sum(pyo.value(x) for x in self.values())
-
     def sum(self) -> "NumericValue":
         return sum(self.values())
